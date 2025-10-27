@@ -117,27 +117,6 @@ export default function Searchbar({ sx, ...other }) {
             </SvgIcon>
           </IconButton>
         </Box>
-        <Box mr={1} sx={{ display: { xs: 'none', sm: 'block'  } }}>
-          <Typography fontWeight={500} fontSize={14} py={1}>
-            Business:
-          </Typography>
-        </Box>
-
-        <Typography
-          fontWeight={600}
-          sx={{
-            p: 0.5,
-            borderRadius: 1,
-            // ml: 1,
-            fontSize: 12,
-            color: 'grey.800',
-            bgcolor: 'common.white',
-            boxShadow: theme.customShadows.z1,
-            display: { xs: 'none', md: 'inline-flex' },
-          }}
-        >
-          Pixel & Co.
-        </Typography>
       </Box>
     </Tooltip>
   );

@@ -106,23 +106,18 @@ export function HeaderBase({
             ) : (
               <>
                 {(isAppRoute || isAdminRoute) && (
-                  <Link to={isAppRoute ? '/app' : '/admin'}>
-                    <Box
-                      alt="logo"
-                      component="img"
-                      // src={`${CONFIG.site.basePath}/assets/icons/navbar/pabbly-email-marketing-logo-svg.svg`}
-                      src={
-                        theme.palette.mode === 'dark'
-                          ? `${CONFIG.site.basePath}/assets/icons/navbar/pem-logo-light.svg`
-                          : `${CONFIG.site.basePath}/assets/icons/navbar/pem-logo-dark.svg`
-                      }
-                      width={120}
-                      sx={{
-                        display: { xs: 'none', sm: 'block' },
-                        zIndex: theme.zIndex.drawer + 1,
-                      }}
-                    />
-                  </Link>
+                                     <Link to={isAppRoute ? '/app' : '/admin'}>
+                     <Box
+                       alt="logo"
+                       component="img"
+                       src={`${CONFIG.site.basePath}/assets/icons/navbar/pabbly-subscription-billing-logo.svg`}
+                       width={120}
+                       sx={{
+                         display: { xs: 'none', sm: 'block' },
+                         zIndex: theme.zIndex.drawer + 1,
+                       }}
+                     />
+                   </Link>
                 )}
                 <Logo
                   width={30}
