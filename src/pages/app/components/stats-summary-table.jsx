@@ -10,17 +10,48 @@ const getSummaryData = (analyticsData) => {
   }
   
   const summary = analyticsData.summary;
+  const plans = analyticsData.plans || [];
+  
+  // Calculate plan-specific metrics
+  const mostSoldPlan = plans.length > 0 
+    ? plans.reduce((max, plan) => (plan.totalCustomers || 0) > (max.totalCustomers || 0) ? plan : max)
+    : null;
+  
+  const leastSoldPlan = plans.length > 0
+    ? plans.reduce((min, plan) => {
+        if (min.totalCustomers === 0 && plan.totalCustomers > 0) return plan;
+        if (plan.totalCustomers > 0 && (plan.totalCustomers || 0) < (min.totalCustomers || 0)) return plan;
+        return min;
+      }, plans[0] || {})
+    : null;
+  
+  const maxChurnPlan = plans.length > 0
+    ? plans.reduce((max, plan) => (plan.churnRate || 0) > (max.churnRate || 0) ? plan : max)
+    : null;
+  
+  const sortedPlans = [...plans].sort((a, b) => (b.totalCustomers || 0) - (a.totalCustomers || 0));
+  const top3Plans = sortedPlans.slice(0, 3).map((plan, index) => 
+    `${index + 1}. ${plan.planName || 'Unknown'}`
+  ).join(', ');
+  
+  const totalPlansSold = plans.reduce((sum, plan) => sum + (plan.totalCustomers || 0), 0);
   
   return [
     { particular: 'New Customer MRR', value: `$${(summary.newCustomerMRR || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
-    { particular: 'Refunds', value: `$${(summary.refunds || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
+    { particular: 'Refunds', value: `$${(summary.refunds || summary.totalRefunds || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
     { particular: 'Overall MRR', value: `$${(summary.totalMRR || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
     { particular: 'Total Revenue', value: `$${(summary.totalMRR || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
-    { particular: 'Overall CAC', value: `$${(summary.overallCAC || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
-    { particular: 'CAC Per Customer', value: `$${(summary.cacPerCustomer || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
-    { particular: 'Customers Left', value: (summary.customersLeft || 0).toString() },
-    { particular: 'New Joined Customers', value: (summary.newJoinedCustomers || 0).toString() },
-    { particular: 'Total Customers This Month', value: (summary.totalCustomersThisMonth || 0).toString() },
+    { particular: 'Overall CAC', value: `$${(summary.overallCAC || summary.cac || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
+    { particular: 'CAC Per Customer', value: `$${(summary.cacPerCustomer || summary.cac || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
+    { particular: 'Total number of active customers', value: (summary.activeCustomers || summary.totalCustomers || 0).toString() },
+    { particular: 'Number of customers who have left', value: (summary.customersLeft || summary.cancelledCustomers || 0).toString() },
+    { particular: 'Number of new customers acquired', value: (summary.newJoinedCustomers || summary.newCustomers || 0).toString() },
+    { particular: 'Total plan sold of a product', value: totalPlansSold.toString() },
+    { particular: 'Which plan was sold the most', value: mostSoldPlan ? `${mostSoldPlan.planName || 'Unknown'} (${mostSoldPlan.totalCustomers || 0} sold)` : 'N/A' },
+    { particular: 'Which plan was sold the least', value: leastSoldPlan ? `${leastSoldPlan.planName || 'Unknown'} (${leastSoldPlan.totalCustomers || 0} sold)` : 'N/A' },
+    { particular: 'Plan name with the maximum number of churn', value: maxChurnPlan ? `${maxChurnPlan.planName || 'Unknown'} (${(maxChurnPlan.churnRate || 0).toFixed(1)}%)` : 'N/A' },
+    { particular: 'Top 3 plans that were purchased most frequently', value: top3Plans || 'N/A' },
+    { particular: 'Total Customers This Month', value: (summary.totalCustomersThisMonth || summary.totalCustomers || 0).toString() },
     { particular: 'Avg Months a Customer Remains', value: (summary.avgMonthsCustomerRemains || 0).toFixed(1) }
   ];
 };
