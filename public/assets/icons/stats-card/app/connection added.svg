@@ -1,0 +1,27 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_3081_36370" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
+<path d="M32 0H0V31.9827H32V0Z" fill="white"/>
+</mask>
+<g mask="url(#mask0_3081_36370)">
+<mask id="mask1_3081_36370" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
+<path d="M32 0H0V31.9827H32V0Z" fill="white"/>
+</mask>
+<g mask="url(#mask1_3081_36370)">
+<mask id="mask2_3081_36370" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
+<path d="M32 0H0V31.9827H32V0Z" fill="white"/>
+</mask>
+<g mask="url(#mask2_3081_36370)">
+<mask id="mask3_3081_36370" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="3" y="3" width="26" height="26">
+<path d="M26.3436 4.36133H5.65704C4.94299 4.36133 4.36414 4.93988 4.36414 5.65356V26.3292C4.36414 27.0429 4.94299 27.6215 5.65704 27.6215H26.3436C27.0575 27.6215 27.6364 27.0429 27.6364 26.3292V5.65356C27.6364 4.93988 27.0575 4.36133 26.3436 4.36133Z" stroke="white" stroke-width="2"/>
+</mask>
+<g mask="url(#mask3_3081_36370)">
+<path d="M26.3436 4.36133H5.65704C4.94299 4.36133 4.36414 4.93988 4.36414 5.65356V26.3292C4.36414 27.0429 4.94299 27.6215 5.65704 27.6215H26.3436C27.0575 27.6215 27.6364 27.0429 27.6364 26.3292V5.65356C27.6364 4.93988 27.0575 4.36133 26.3436 4.36133Z" fill="#28A645" stroke="#28A645" stroke-width="2"/>
+</g>
+<path d="M23.7729 19.8524V12.1299H31.5V19.8524H23.7729Z" fill="#28A645" stroke="#28A645"/>
+<path d="M0.5 19.8524V12.1299H8.22711V19.8524H0.5Z" fill="#28A645" stroke="#28A645"/>
+<path d="M15.9993 0.5C18.1333 0.5 19.8629 2.22901 19.8629 4.36127C19.8629 6.49355 18.1333 8.22255 15.9993 8.22255C13.8653 8.22255 12.1357 6.49355 12.1357 4.36127C12.1357 2.229 13.8653 0.5 15.9993 0.5Z" fill="#28A645" stroke="#28A645"/>
+<path d="M15.9993 23.7603C18.1333 23.7603 19.8629 25.4893 19.8629 27.6215C19.8629 29.7539 18.1333 31.4828 15.9993 31.4828C13.8653 31.4828 12.1357 29.7539 12.1357 27.6215C12.1357 25.4893 13.8653 23.7603 15.9993 23.7603Z" fill="#28A645" stroke="#28A645"/>
+</g>
+</g>
+</g>
+</svg>

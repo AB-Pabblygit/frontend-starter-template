@@ -1,0 +1,148 @@
+import { useState } from 'react';
+import { useTheme } from '@emotion/react';
+import { useNavigate } from 'react-router';
+import { Helmet } from 'react-helmet-async';
+
+import { Box, Button, Tooltip, useMediaQuery } from '@mui/material';
+
+import { CONFIG } from 'src/config-global';
+// import { listItems } from 'src/_mock/big-card/_dashboardBigCardListItems';
+
+import { listItems } from 'src/_mock/_big-card/_app/_teamMembersBigCardListItems';
+
+import { Iconify } from 'src/components/iconify';
+import BigCard from 'src/components/big-card/big-card';
+import StatsCards from 'src/components/stats-card/stats-card';
+
+import { TeamMemberDialog } from '../team-members/hooks/add-team-member';
+import { TeamMemberTable } from '../team-members/components/team-member-table/team-member-table';
+import { SharedWithTable } from '../team-members/components/shared-with-table/shared-with-table';
+
+// ----------------------------------------------------------------------
+
+const metadata = { title: `Team Members | ${CONFIG.site.name}` };
+const { items, style } = listItems;
+
+export default function TeamMembersPage() {
+  const [selectedListItem, setSelectedListItem] = useState(0);
+
+  const handleListItemSelect = (index) => {
+    setSelectedListItem(index);
+  };
+
+  const theme = useTheme();
+
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const navigate = useNavigate();
+
+  // Custom handler to open dialog
+  const [isTeamMemberDialogOpen, setDialogOpen] = useState(false);
+
+  const handleConfigureTeamMember = () => {
+    setDialogOpen(true);
+  };
+
+  return (
+    <>
+      <Helmet>
+        <title> {metadata.title}</title>
+      </Helmet>
+      <Box
+        sx={{
+          gap: 3,
+          display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
+          alignItems: isMobile ? 'flex-start' : 'flex-start',
+          // justifyContent: 'space-between',
+        }}
+      >
+        <Box sx={{ width: '100%' }}>
+          <Box
+            sx={{
+              mb: 3,
+
+              gap: 3,
+              display: 'grid',
+              gridTemplateColumns: { xs: 'repeat(1, 1fr)', md: 'repeat(3, 1fr)' },
+            }}
+          >
+            {/* Cards Section */}
+            <Tooltip title="Team members added by you." arrow placement="top">
+              <div>
+                <StatsCards
+                  cardtitle="Unique Team Members Added"
+                  cardstats="20"
+                  icon_name="unique.png"
+                  icon_color="#1A76FF"
+                  bg_gradient="#1A76FF"
+                />
+              </div>
+            </Tooltip>
+            <Tooltip title="Folder(s) shared by you." arrow placement="top">
+              <div>
+                <StatsCards
+                  cardtitle="Folders Shared by You"
+                  cardstats="10"
+                  icon_name="byyou.png"
+                  icon_color="#009C53"
+                  bg_gradient="#009C53"
+                />
+              </div>
+            </Tooltip>
+
+            <Tooltip title="Folder(s) shared with you." arrow placement="top">
+              <div>
+                <StatsCards
+                  cardtitle="Folders Shared With You"
+                  cardstats="1,000"
+                  icon_name="sharedwithyou.png"
+                  icon_color="#009CBB"
+                  bg_gradient="#009CBB"
+                />
+              </div>
+            </Tooltip>
+          </Box>
+
+          <BigCard
+            //  tooltip="View file upload guidelines for email verification."
+            getHelp={false}
+            isVideo
+            bigcardtitle="Points To Remember"
+            //  bigcardsubtitle="Please adhere to the following guidelines when uploading your CSV file:"
+            style={style}
+            items={items}
+            videoLink="https://www.youtube.com/embed/YBEA1SjtwQ0?si=wdAWMHV4MuPE8WWM"
+            thumbnailName="Pabbly-Hook-Add-Team-Members.png"
+            learnMoreLink="https://forum.pabbly.com/threads/what-is-team-members-in-pabbly-hook.26905/"
+            keyword="Note:"
+            bigcardNote="All data and reports older than 15 days will be permanently removed automatically. For reference, you can Download Sample File to guide you in formatting your data correctly."
+            action={
+              <Tooltip
+                title="Add a team members and share folder(s) with them."
+                arrow
+                placement="top"
+                disableInteractive
+              >
+                <Button
+                  startIcon={<Iconify icon="heroicons:plus-circle-16-solid" />}
+                  onClick={() => setDialogOpen(true)}
+                  color="primary"
+                  variant="outlined"
+                  size="large"
+                >
+                  Add Team Member
+                </Button>
+              </Tooltip>
+            }
+          />
+
+          {/* Separate Dialog */}
+          <TeamMemberDialog open={isTeamMemberDialogOpen} onClose={() => setDialogOpen(false)} />
+          <TeamMemberTable />
+          <SharedWithTable />
+
+        </Box>
+      </Box>
+    </>
+  );
+}

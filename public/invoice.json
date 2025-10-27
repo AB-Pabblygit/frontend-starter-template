@@ -1,0 +1,185 @@
+{
+  "_id": "  ",
+  "customer_id": "61cf3b958b7ef36297e5a21d",
+  "user_id": "5bebb8afef788b4507f7ce75",
+  "status": "paid",
+  "quantity": 1,
+  "due_amount": 0,
+  "plan_id": [
+    "673b2a92de8bd6206516d5c5"
+  ],
+  "payment_term": "",
+  "subscription_id": "68f89ecd399288f3d20c1a93",
+  "subscription": {
+    "customer": {
+      "billing_address": {
+        "street1": "Iconcept",
+        "city": "Chandigarh",
+        "state": "Chandigarh",
+        "state_code": "CH",
+        "zip_code": "160020",
+        "country": "IN"
+      },
+      "shipping_address": {
+        "street1": "",
+        "city": "",
+        "state": "",
+        "state_code": "",
+        "zip_code": "",
+        "country": ""
+      },
+      "other_detail": {},
+      "role": "",
+      "credit": {
+        "remaining": 0
+      },
+      "api": "",
+      "portal_status": true,
+      "set_password": {
+        "invite": "sent",
+        "forget_password_key": ""
+      },
+      "pcustomer_id": "61cf3702ec5aeb77aa1a1698",
+      "phone": "+919154650",
+      "tax_id": "04AAFFI5022D1Z1",
+      "createdAt": "2021-12-31T17:19:17.720Z",
+      "updatedAt": "2025-10-22T09:07:25.588Z",
+      "id": "61cf3b958b7ef36297e5a21d",
+      "user_id": "5bebb8afef788b4507f7ce75",
+      "first_name": "Vishal",
+      "last_name": "Soni",
+      "user_name": "vii@sdsdrp.com",
+      "email_id": "vii@sdsdrp.com"
+    },
+    "plan": {
+      "plan_type": "per_unit",
+      "min_quantity": 1,
+      "max_quantity": 1000000,
+      "plan_active": "true",
+      "redirect_url": "https://www.pavd.com/monthly-thank-you/",
+      "specific_keep_live": false,
+      "meta_data": {
+        "tasks": "10000",
+        "workflows": "500"
+      },
+      "currency_code": "INR",
+      "currency_symbol": "₹",
+      "gateways_array": [
+        "637620d93da74949b4485da8",
+        "640b021a41913963bf815c7c"
+      ],
+      "payment_gateway": "selected",
+      "failed_payment_gateway_array": [
+        "640b021a41913963bf815c7c"
+      ],
+      "failed_payment_gateway": "selected",
+      "trial_type": "day",
+      "trial_amount": 0,
+      "funnel_count": "",
+      "funnel": [],
+      "custom_payment_term": 0,
+      "is_metered": false,
+      "setup_fee_type": "",
+      "createdAt": "2024-11-18T11:52:50.333Z",
+      "updatedAt": "2025-09-29T04:28:19.846Z",
+      "id": "673b2a92de8bd6206516d5c5",
+      "product_id": "5e6624827e5eb40f41789173",
+      "user_id": "5bebb8afef788b4507f7ce75",
+      "plan_name": "pavd Coct Monthly Plan - Tier 1 (INR) (HSN Code: 931)",
+      "plan_code": "india-pavd-connect-monthly-plan---tier-10000-tasks",
+      "price": 1685,
+      "billing_period": "m",
+      "billing_period_num": "1",
+      "billing_cycle": "lifetime",
+      "billing_cycle_num": "",
+      "trial_period": 0,
+      "setup_fee": 0,
+      "plan_description": "<p>You will get 10,000 tasks that will be valid for one month. Next month payment will not be auto-charged. You will have to do the payments manually yourself.</p>"
+    },
+    "setup_fee": 0,
+    "currency_code": "INR",
+    "currency_symbol": "₹",
+    "pcustomer_id": "61cf3702ec5aeb77aa1a1698",
+    "payment_method": "custom",
+    "taxable": true,
+    "taxrule_id": "63c285ae4db07e29219b4e66",
+    "gateway_type": "custom",
+    "payment_terms": "",
+    "gateway_id": "640b021a41913963bf815c7c",
+    "gateway_name": "Pay Via CARD / UPI / BHIM / Net Banking",
+    "custom_gateway_type": "razorpay",
+    "custom_fields": [
+      {
+        "name": "business_name_billing_name",
+        "type": "text",
+        "label": "Business Name / Billing Name",
+        "value": "Iconcept"
+      }
+    ],
+    "custom": {
+      "auth": "success"
+    },
+    "funnel": [],
+    "requested_ip": "2409:40d7:a:da06:a571:7e5e:ffee:bab2",
+    "cron_process": "done",
+    "createdAt": "2025-10-22T09:07:25.606Z",
+    "updatedAt": "2025-10-22T09:12:01.742Z",
+    "id": "68f89ecd399288f3d20c1a93",
+    "customer_id": "61cf3b958b7ef36297e5a21d",
+    "product_id": "5e6624827e5eb40f41789173",
+    "plan_id": "673b2a92de8bd6206516d5c5",
+    "amount": 1685,
+    "user_id": "5bebb8afef788b4507f7ce75",
+    "email_id": "vii@sdsdrp.com",
+    "status": "live",
+    "quantity": 1,
+    "starts_at": "2025-10-22T09:07:25.252Z",
+    "activation_date": "2025-10-22T09:12:01.011Z",
+    "expiry_date": "2125-10-22T09:07:25.252Z",
+    "trial_days": 0,
+    "trial_expiry_date": "",
+    "next_billing_date": "2025-11-22T09:12:01.011Z",
+    "last_billing_date": "2025-10-22T09:12:01.011Z",
+    "canceled_date": ""
+  },
+  "product_id": "5e6624827e5eb40f41789173",
+  "setup_fee": 0,
+  "currency_symbol": "₹",
+  "currency_code": "INR",
+  "pcustomer_id": "61cf3702ec5aeb77aa1a1698",
+  "credit_note": {
+    "total_tax": "303.30",
+    "status": "success",
+    "new_plan_total": 1988.3,
+    "total_credit_amount": 0,
+    "charge_amount": 1988.3,
+    "credit_applied": []
+  },
+  "due_date": "2025-10-22T09:07:25.252Z",
+  "tax_apply": {
+    "id": "63c285ae4db07e29219b4e66",
+    "country": "IN",
+    "taxes": {
+      "igst": 18
+    },
+    "record_tax_id": true,
+    "state": "all",
+    "validate_tax_in": false,
+    "tax_id": "04AAFFI5022D1Z1",
+    "exempt_tax": [],
+    "total_amount": 1685,
+    "total_amount_before_tax": 1685,
+    "total_tax": 303.3
+  },
+  "amount": 1988.3,
+  "invoice_id": "RPI-21437",
+  "order_number": "ORDERRPI-33881",
+  "expiry_date": "2025-11-03T09:07:25.252Z",
+  "createdAt": "2025-10-22T09:07:25.668Z",
+  "updatedAt": "2025-10-22T09:07:25.674Z",
+  "cron_process": "done",
+  "current_tracking_id": "",
+  "paid_date": "2025-10-22T09:12:01.011Z",
+  "retry": false,
+  "retry_count": 0
+}
