@@ -1,25 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 
-import { Box, Alert, Select, MenuItem, useTheme, InputLabel, FormControl, CircularProgress, Tabs, Tab } from '@mui/material';
+import { Box, Tab, Tabs, Alert, Select, MenuItem, useTheme, InputLabel, FormControl, CircularProgress } from '@mui/material';
 
-import { CONFIG } from 'src/config-global';
 import { checkAnalyticsAPI, checkBackendHealth } from 'src/utils/backend-health';
 import { validateApiResponse, validateAnalyticsData } from 'src/utils/validation';
-import { DashboardContent } from 'src/layouts/app';
 
-import { realisticAnalyticsService } from 'src/_mock/_database';
+import { CONFIG } from 'src/config-global';
+import { DashboardContent } from 'src/layouts/app';
 import analyticsApi from 'src/services/analyticsApi';
+import { realisticAnalyticsService } from 'src/_mock/_database';
 
 import { Iconify } from 'src/components/iconify';
 import PageHeader from 'src/components/page-header/page-header';
 import ErrorBoundary from 'src/components/error-boundary/error-boundary';
 
-import { AnalyticsStatsCards } from './components/analytics-stats-cards';
-import { CustomerDetailsDrawer } from './components/customer-details-drawer';
-import { CustomerDetailsTable } from './components/customer-details-table';
-import { CustomerListsTable } from './components/customer-lists-table';
 import { StatsSummaryTable } from './components/stats-summary-table';
+import { CustomerListsTable } from './components/customer-lists-table';
+import { AnalyticsStatsCards } from './components/analytics-stats-cards';
+import { CustomerDetailsTable } from './components/customer-details-table';
+import { CustomerDetailsDrawer } from './components/customer-details-drawer';
 
 // ----------------------------------------------------------------------
 
@@ -27,7 +27,9 @@ const metadata = { title: `Customer MRR & Churn Analytics | ${CONFIG.site.name}`
 
 export default function AnalyticsPage() {
   const theme = useTheme();
-  const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7)); // Current month in YYYY-MM format
+  const currentDate = new Date();
+  const [selectedMonth, setSelectedMonth] = useState((currentDate.getMonth() + 1).toString()); // 1-12
+  const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear().toString());
   const [selectedProduct, setSelectedProduct] = useState('All Products');
   const [selectedPlan, setSelectedPlan] = useState('All Plans');
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -62,9 +64,10 @@ export default function AnalyticsPage() {
 
       try {
         // Build filters for backend API
+        const monthStr = selectedMonth.padStart(2, '0');
         const filters = {
-          startDate: `${selectedMonth}-01`,
-          endDate: `${selectedMonth}-31`,
+          startDate: `${selectedYear}-${monthStr}-01`,
+          endDate: `${selectedYear}-${monthStr}-31`,
           ...(selectedProduct !== 'All Products' && { productId: selectedProduct }),
           ...(selectedPlan !== 'All Plans' && { planId: selectedPlan }),
         };
@@ -111,7 +114,7 @@ export default function AnalyticsPage() {
     };
 
     fetchAnalytics();
-  }, [selectedProduct, selectedPlan, selectedMonth]);
+  }, [selectedProduct, selectedPlan, selectedMonth, selectedYear]);
 
   const handleTabChange = (event, newValue) => {
     setCurrentTab(newValue);
@@ -225,7 +228,7 @@ export default function AnalyticsPage() {
             <FormControl 
               size="small" 
               sx={{ 
-                minWidth: 150,
+                minWidth: 120,
                 '& .MuiOutlinedInput-root': {
                   borderRadius: 2,
                   '& fieldset': {
@@ -241,23 +244,65 @@ export default function AnalyticsPage() {
               }}
             >
               <InputLabel>Month</InputLabel>
-                  <Select
-                    value={selectedMonth}
-                    label="Month"
-                    onChange={(e) => setSelectedMonth(e.target.value)}
-                  >
-                    {Array.from({ length: 6 }, (_, i) => {
-                      const monthDate = new Date();
-                      monthDate.setMonth(monthDate.getMonth() - i);
-                      const monthValue = monthDate.toISOString().slice(0, 7);
-                      const monthName = monthDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-                      return (
-                        <MenuItem key={monthValue} value={monthValue}>
-                          {monthName}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
+              <Select
+                value={selectedMonth}
+                label="Month"
+                onChange={(e) => setSelectedMonth(e.target.value)}
+              >
+                {[
+                  { value: '1', label: 'January' },
+                  { value: '2', label: 'February' },
+                  { value: '3', label: 'March' },
+                  { value: '4', label: 'April' },
+                  { value: '5', label: 'May' },
+                  { value: '6', label: 'June' },
+                  { value: '7', label: 'July' },
+                  { value: '8', label: 'August' },
+                  { value: '9', label: 'September' },
+                  { value: '10', label: 'October' },
+                  { value: '11', label: 'November' },
+                  { value: '12', label: 'December' },
+                ].map((month) => (
+                  <MenuItem key={month.value} value={month.value}>
+                    {month.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl 
+              size="small" 
+              sx={{ 
+                minWidth: 120,
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                  '& fieldset': {
+                    borderColor: theme.palette.grey[300],
+                  },
+                  '&:hover fieldset': {
+                    borderColor: theme.palette.grey[400],
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: theme.palette.primary.main,
+                  },
+                },
+              }}
+            >
+              <InputLabel>Year</InputLabel>
+              <Select
+                value={selectedYear}
+                label="Year"
+                onChange={(e) => setSelectedYear(e.target.value)}
+              >
+                {Array.from({ length: 6 }, (_, i) => {
+                  const year = currentDate.getFullYear() - i;
+                  return (
+                    <MenuItem key={year} value={year.toString()}>
+                      {year}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
             </FormControl>
             
             <FormControl 

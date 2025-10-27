@@ -5,12 +5,12 @@ import { Card, Paper, Table, TableRow, useTheme, TableBody, TableCell, TableHead
 export function StatsSummaryTable({ analyticsData }) {
   const theme = useTheme();
 
-  const getSummaryData = (analyticsData) => {
-    if (!analyticsData || !analyticsData.summary) {
+  const getSummaryData = (data) => {
+    if (!data || !data.summary) {
       return [];
     }
    
-    const { summary, plans = [], customers = [] } = analyticsData;
+    const { summary, plans = [], customers = [] } = data;
    
     // Calculate plan-specific metrics
     const planMetrics = plans.reduce((acc, plan) => {

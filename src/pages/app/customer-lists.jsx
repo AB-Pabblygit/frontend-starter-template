@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 
 import { Box, Tab, Tabs, useTheme } from '@mui/material';
-import { DashboardContent } from 'src/layouts/app';
 
+import { CONFIG } from 'src/config-global';
+import { DashboardContent } from 'src/layouts/app';
 import analyticsApi from 'src/services/analyticsApi';
 import { realisticAnalyticsService } from 'src/_mock/_database';
 
-import { CONFIG } from 'src/config-global';
 import { Iconify } from 'src/components/iconify';
 import PageHeader from 'src/components/page-header/page-header';
 import ErrorBoundary from 'src/components/error-boundary/error-boundary';
