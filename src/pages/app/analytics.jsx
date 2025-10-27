@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 
-import { Box, Alert, Select, MenuItem, useTheme, InputLabel, FormControl, CircularProgress } from '@mui/material';
+import { Box, Alert, Select, MenuItem, useTheme, InputLabel, FormControl, CircularProgress, Tabs, Tab } from '@mui/material';
 
 import { CONFIG } from 'src/config-global';
 import { checkAnalyticsAPI, checkBackendHealth } from 'src/utils/backend-health';
@@ -11,12 +11,14 @@ import { DashboardContent } from 'src/layouts/app';
 import { realisticAnalyticsService } from 'src/_mock/_database';
 import analyticsApi from 'src/services/analyticsApi';
 
+import { Iconify } from 'src/components/iconify';
 import PageHeader from 'src/components/page-header/page-header';
 import ErrorBoundary from 'src/components/error-boundary/error-boundary';
 
 import { AnalyticsStatsCards } from './components/analytics-stats-cards';
 import { CustomerDetailsDrawer } from './components/customer-details-drawer';
 import { CustomerDetailsTable } from './components/customer-details-table';
+import { CustomerListsTable } from './components/customer-lists-table';
 import { StatsSummaryTable } from './components/stats-summary-table';
 
 // ----------------------------------------------------------------------
@@ -33,6 +35,7 @@ export default function AnalyticsPage() {
   const [analyticsData, setAnalyticsData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [currentTab, setCurrentTab] = useState('sales');
 
   // Available products and plans (using actual product/plan IDs)
   const products = [
@@ -77,9 +80,9 @@ export default function AnalyticsPage() {
             // Validate analytics data
             validateAnalyticsData(response.data);
             setAnalyticsData(response.data);
-            return; // Success, exit early
+          } else {
+            throw new Error(response.error || 'Failed to fetch analytics data');
           }
-          throw new Error(response.error || 'Failed to fetch analytics data');
         } catch (apiError) {
           // If backend API fails, check backend health and fallback to mock data
           if (process.env.NODE_ENV === 'development') {
@@ -110,6 +113,9 @@ export default function AnalyticsPage() {
     fetchAnalytics();
   }, [selectedProduct, selectedPlan, selectedMonth]);
 
+  const handleTabChange = (event, newValue) => {
+    setCurrentTab(newValue);
+  };
 
   const handleViewCustomer = (customerData) => {
     setSelectedCustomer(customerData);
@@ -120,6 +126,75 @@ export default function AnalyticsPage() {
     setDrawerOpen(false);
     setSelectedCustomer(null);
   };
+
+  const getCustomerDataForTab = () => {
+    if (!analyticsData?.customers) return [];
+
+    const { customers } = analyticsData;
+    const now = new Date();
+    const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    switch (currentTab) {
+      case 'new-customers':
+        return customers.filter((customer) => {
+          const signupDate = new Date(customer.signupDate);
+          return signupDate >= thisMonthStart;
+        });
+      
+      case 'refunded-customers':
+        return customers.filter((customer) => {
+          const hasRefund = analyticsData.invoices?.some(
+            (invoice) => invoice.customerId === customer.id && invoice.status === 'refunded'
+          );
+          return hasRefund;
+        });
+      
+      case 'churned-customers':
+        return customers.filter((customer) => customer.status === 'cancelled');
+      
+      case 'active-customers':
+        return customers.filter((customer) => customer.status === 'active');
+      
+      case 'all-customers':
+        return customers;
+      
+      default:
+        return [];
+    }
+  };
+
+  const TABS = [
+    {
+      value: 'sales',
+      label: 'Sales',
+      icon: <Iconify icon="solar:money-bag-bold" width={24} />,
+    },
+    {
+      value: 'new-customers',
+      label: 'New Customers',
+      icon: <Iconify icon="solar:user-plus-bold" width={24} />,
+    },
+    {
+      value: 'refunded-customers',
+      label: 'Refunded',
+      icon: <Iconify icon="solar:money-bag-bold" width={24} />,
+    },
+    {
+      value: 'churned-customers',
+      label: 'Churned/Lost',
+      icon: <Iconify icon="solar:user-minus-bold" width={24} />,
+    },
+    {
+      value: 'active-customers',
+      label: 'Active',
+      icon: <Iconify icon="solar:users-group-rounded-bold" width={24} />,
+    },
+    {
+      value: 'all-customers',
+      label: 'All Customers',
+      icon: <Iconify icon="solar:users-group-two-rounded-bold" width={24} />,
+    },
+  ];
 
   return (
     <>
@@ -278,13 +353,45 @@ export default function AnalyticsPage() {
           </Box>
         )}
 
-        {/* Customer Details Table */}
+        {/* Tabs for Tables */}
         {!loading && (
           <Box sx={{ mb: 4 }}>
-            <CustomerDetailsTable 
-              onViewCustomer={handleViewCustomer}
-              analyticsData={analyticsData}
-            />
+            <Tabs
+              value={currentTab}
+              onChange={handleTabChange}
+              sx={{
+                mb: 3,
+                borderBottom: 1,
+                borderColor: 'divider',
+              }}
+            >
+              {TABS.map((tab) => (
+                <Tab
+                  key={tab.value}
+                  value={tab.value}
+                  icon={tab.icon}
+                  iconPosition="start"
+                  label={tab.label}
+                />
+              ))}
+            </Tabs>
+
+            {/* Sales Table */}
+            {currentTab === 'sales' && (
+              <CustomerDetailsTable 
+                onViewCustomer={handleViewCustomer}
+                analyticsData={analyticsData}
+              />
+            )}
+
+            {/* Customer Lists Tables */}
+            {currentTab !== 'sales' && (
+              <CustomerListsTable 
+                customers={getCustomerDataForTab()}
+                tabType={currentTab}
+                loading={loading}
+              />
+            )}
           </Box>
         )}
         </DashboardContent>

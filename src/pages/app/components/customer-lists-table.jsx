@@ -1,9 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import {
   Card,
+  Chip,
   Table,
-  Checkbox,
   TableRow,
   TableBody,
   TableCell,
@@ -11,8 +11,6 @@ import {
   Typography,
   TableContainer,
   TablePagination,
-  Chip,
-  Box,
   Tooltip,
   IconButton,
 } from '@mui/material';
@@ -44,9 +42,10 @@ export function CustomerListsTable({ customers = [], tabType = 'all-customers', 
     setPage(0);
   };
 
-  const paginatedCustomers = useMemo(() => {
-    return customers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-  }, [customers, page, rowsPerPage]);
+  const paginatedCustomers = useMemo(
+    () => customers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+    [customers, page, rowsPerPage]
+  );
 
   const getStatusColor = (status) => {
     switch (status) {
