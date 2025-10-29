@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Box, Card, Button, InputLabel, FormControl, MenuItem, Select, Typography } from '@mui/material';
+import { Box, Card, Button, Select, MenuItem, InputLabel, Typography, FormControl } from '@mui/material';
 
 // Products & Plans data matching HTML
 const PRODUCTS = [
@@ -80,7 +80,7 @@ export function AnalyticsSimulator({ customers = [], events = [], onAction, onGe
     const lastNames = ['Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis','Rodriguez','Martinez','Hernandez','Lopez','Gonzalez','Wilson','Anderson','Thomas','Taylor','Moore','Jackson','Martin','Lee','Perez','Thompson','White','Harris','Sanchez','Clark','Ramirez','Lewis','Robinson','Walker','Young','Allen','King','Wright','Scott','Torres','Nguyen','Hill','Flores','Green','Adams','Nelson','Baker','Hall','Rivera','Campbell','Mitchell','Carter'];
     
     const count = Math.floor(Math.random() * 11) + 5; // 5-15
-    const newCustomers = Array.from({ length: count }).map((_, idx) => {
+    const newCustomers = Array.from({ length: count }).map((__, idx) => {
       const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
       const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
       const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${Math.floor(Math.random()*99)}@${['gmail.com','yahoo.com','outlook.com','company.com','business.org'][Math.floor(Math.random()*5)]}`;
@@ -111,7 +111,7 @@ export function AnalyticsSimulator({ customers = [], events = [], onAction, onGe
           end: null,
           active: true
         }],
-        transactions: Array.from({ length: monthsAgo }, (_, index) => ({
+        transactions: Array.from({ length: monthsAgo }, (_unused, index) => ({
           date: new Date(signupDate.getFullYear(), signupDate.getMonth() + index, signupDate.getDate()).toISOString().split('T')[0],
           amount: plan.price,
           type: 'invoice',

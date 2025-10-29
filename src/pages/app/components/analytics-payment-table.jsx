@@ -3,16 +3,17 @@ import { useState } from 'react';
 import {
   Box,
   Card,
-  Table,
+  Chip,
   Paper,
+  Table,
   TableRow,
   useTheme,
   TableBody,
   TableCell,
   TableHead,
   Typography,
-  Chip,
   TableContainer,
+  TablePagination,
 } from '@mui/material';
 
 // Sample data with unique email addresses and varied products/plans
@@ -36,7 +37,7 @@ export const PAYMENT_SOURCE = [
     id: 1_2,
     name: 'Nimesh Sahu',
     email: 'nimesh.sahu@pabbly.com',
-    paymentDate: '11/02/2025',
+    paymentDate: '10/02/2025',
     product: 'Pabbly Connect',
     plan: 'Tier 2',
     paymentGateway: 'Stripe',
@@ -51,7 +52,7 @@ export const PAYMENT_SOURCE = [
     id: 1_3,
     name: 'Nimesh Sahu',
     email: 'nimesh.sahu@pabbly.com',
-    paymentDate: '11/10/2025',
+    paymentDate: '10/10/2025',
     product: 'Pabbly Connect',
     plan: 'Unlimited Plan',
     paymentGateway: 'PayPal',
@@ -66,7 +67,7 @@ export const PAYMENT_SOURCE = [
     id: 2,
     name: 'Neeraj Agarwal',
     email: 'neeraj.agarwal@pabbly.com',
-    paymentDate: '11/15/2025',
+    paymentDate: '10/15/2025',
     product: 'Pabbly Connect',
     plan: 'Tier 2',
     paymentGateway: 'Stripe',
@@ -81,7 +82,7 @@ export const PAYMENT_SOURCE = [
     id: 2_2,
     name: 'Neeraj Agarwal',
     email: 'neeraj.agarwal@pabbly.com',
-    paymentDate: '11/04/2025',
+    paymentDate: '10/04/2025',
     product: 'Pabbly Connect',
     plan: 'Tier 1',
     paymentGateway: 'Stripe',
@@ -89,14 +90,14 @@ export const PAYMENT_SOURCE = [
     currentMonthMRR: '0',
     frequency: 'Monthly',
     advancePayment: '-',
-    customerStatus: 'Churned',
+    customerStatus: 'Active',
     subscriptionStatus: 'Cancelled'
   },
   {
     id: 2_3,
     name: 'Neeraj Agarwal',
     email: 'neeraj.agarwal@pabbly.com',
-    paymentDate: '11/20/2025',
+    paymentDate: '10/20/2025',
     product: 'Pabbly Connect',
     plan: 'Unlimited Plan',
     paymentGateway: 'RazorPay',
@@ -104,14 +105,14 @@ export const PAYMENT_SOURCE = [
     currentMonthMRR: '$19',
     frequency: 'Monthly',
     advancePayment: '-',
-    customerStatus: 'Churned',
+    customerStatus: 'Active',
     subscriptionStatus: 'Refunded'
   },
   {
     id: 3,
     name: 'Hardik Pradhan',
     email: 'hardik.pradhan@pabbly.com',
-    paymentDate: '12/01/2025',
+    paymentDate: '10/01/2025',
     product: 'Pabbly Connect',
     plan: 'Unlimited Plan',
     paymentGateway: 'PayPal',
@@ -126,7 +127,7 @@ export const PAYMENT_SOURCE = [
     id: 4,
     name: 'Aakash Bhelkar',
     email: 'aakash.bhelkar@pabbly.com',
-    paymentDate: '11/20/2025',
+    paymentDate: '10/20/2025',
     product: 'Pabbly Connect',
     plan: 'Tier 1',
     paymentGateway: 'Stripe',
@@ -156,7 +157,7 @@ export const PAYMENT_SOURCE = [
     id: 6,
     name: 'Mike Wilson',
     email: 'mike.wilson@company.com',
-    paymentDate: '09/01/2025',
+    paymentDate: '10/01/2025',
     product: 'Pabbly Email Marketing',
     plan: 'Pro Plan',
     paymentGateway: 'PayPal',
@@ -171,7 +172,7 @@ export const PAYMENT_SOURCE = [
     id: 7,
     name: 'Lisa Brown',
     email: 'lisa.brown@startup.io',
-    paymentDate: '08/15/2025',
+    paymentDate: '10/15/2025',
     product: 'Pabbly CRM',
     plan: 'Enterprise Plan',
     paymentGateway: 'RazorPay',
@@ -186,7 +187,7 @@ export const PAYMENT_SOURCE = [
     id: 8,
     name: 'David Smith',
     email: 'david.smith@business.com',
-    paymentDate: '07/01/2025',
+    paymentDate: '10/01/2025',
     product: 'Pabbly Analytics',
     plan: 'Starter Plan',
     paymentGateway: 'Stripe',
@@ -201,7 +202,7 @@ export const PAYMENT_SOURCE = [
     id: 9,
     name: 'Emma Davis',
     email: 'emma.davis@tech.com',
-    paymentDate: '06/10/2025',
+    paymentDate: '10/10/2025',
     product: 'Pabbly Connect',
     plan: 'Unlimited Plan',
     paymentGateway: 'PayPal',
@@ -216,7 +217,7 @@ export const PAYMENT_SOURCE = [
     id: 10,
     name: 'John Miller',
     email: 'john.miller@corp.com',
-    paymentDate: '05/20/2025',
+    paymentDate: '10/20/2025',
     product: 'Pabbly Workflow',
     plan: 'Pro Plan',
     paymentGateway: 'Stripe',
@@ -226,28 +227,148 @@ export const PAYMENT_SOURCE = [
     advancePayment: '$245', // 5 months remaining * $49
     customerStatus: 'Active',
     subscriptionStatus: 'Recurring'
+  },
+  {
+    id: 11,
+    name: 'Alice Cooper',
+    email: 'alice.cooper@music.com',
+    paymentDate: '10/05/2025',
+    product: 'Pabbly Connect',
+    plan: 'Tier 1',
+    paymentGateway: 'PayPal',
+    previousMonthMRR: '$0',
+    currentMonthMRR: '$19',
+    frequency: 'Monthly',
+    advancePayment: '-',
+    customerStatus: 'New Joined',
+    subscriptionStatus: 'New Subscription'
+  },
+  {
+    id: 12,
+    name: 'Bob Dylan',
+    email: 'bob.dylan@folk.com',
+    paymentDate: '10/12/2025',
+    product: 'Pabbly Email Marketing',
+    plan: 'Basic Plan',
+    paymentGateway: 'RazorPay',
+    previousMonthMRR: '$29',
+    currentMonthMRR: '$0',
+    frequency: 'Monthly',
+    advancePayment: '-',
+    customerStatus: 'Churned',
+    subscriptionStatus: 'Cancelled'
+  },
+  {
+    id: 13,
+    name: 'Carol King',
+    email: 'carol.king@songwriter.com',
+    paymentDate: '10/08/2025',
+    product: 'Pabbly Connect',
+    plan: 'Tier 2',
+    paymentGateway: 'Stripe',
+    previousMonthMRR: '$39',
+    currentMonthMRR: '$39',
+    frequency: 'Monthly',
+    advancePayment: '-',
+    customerStatus: 'Active',
+    subscriptionStatus: 'Recurring'
+  },
+  {
+    id: 13_2,
+    name: 'Carol King',
+    email: 'carol.king@songwriter.com',
+    paymentDate: '10/15/2025',
+    product: 'Pabbly Workflow',
+    plan: 'Basic Plan',
+    paymentGateway: 'PayPal',
+    previousMonthMRR: '$0',
+    currentMonthMRR: '$29',
+    frequency: 'Monthly',
+    advancePayment: '-',
+    customerStatus: 'Active',
+    subscriptionStatus: 'New Subscription'
+  },
+  {
+    id: 14,
+    name: 'David Bowie',
+    email: 'david.bowie@glam.com',
+    paymentDate: '10/03/2025',
+    product: 'Pabbly CRM',
+    plan: 'Enterprise Plan',
+    paymentGateway: 'RazorPay',
+    previousMonthMRR: '$99',
+    currentMonthMRR: '$99',
+    frequency: 'Yearly',
+    advancePayment: '$693', // 7 months remaining * $99
+    customerStatus: 'Active',
+    subscriptionStatus: 'Recurring'
+  },
+  {
+    id: 15,
+    name: 'Ella Fitzgerald',
+    email: 'ella.fitzgerald@jazz.com',
+    paymentDate: '10/18/2025',
+    product: 'Pabbly Analytics',
+    plan: 'Starter Plan',
+    paymentGateway: 'Stripe',
+    previousMonthMRR: '$15',
+    currentMonthMRR: '$0',
+    frequency: 'Monthly',
+    advancePayment: '-',
+    customerStatus: 'Churned',
+    subscriptionStatus: 'Refunded'
+  },
+  {
+    id: 16,
+    name: 'Frank Sinatra',
+    email: 'frank.sinatra@swing.com',
+    paymentDate: '10/25/2025',
+    product: 'Pabbly Connect',
+    plan: 'Unlimited Plan',
+    paymentGateway: 'PayPal',
+    previousMonthMRR: '$79',
+    currentMonthMRR: '$79',
+    frequency: 'Yearly',
+    advancePayment: '$395', // 5 months remaining * $79
+    customerStatus: 'Active',
+    subscriptionStatus: 'Recurring'
+  },
+  {
+    id: 16_2,
+    name: 'Frank Sinatra',
+    email: 'frank.sinatra@swing.com',
+    paymentDate: '10/28/2025',
+    product: 'Pabbly Email Marketing',
+    plan: 'Pro Plan',
+    paymentGateway: 'RazorPay',
+    previousMonthMRR: '$0',
+    currentMonthMRR: '$49',
+    frequency: 'Monthly',
+    advancePayment: '-',
+    customerStatus: 'Active',
+    subscriptionStatus: 'New Subscription'
   }
 ];
 
 const COLUMN_DESCRIPTIONS = {
-  paymentDate: 'Date when the payment was processed or transaction occurred',
-  customerStatus: 'Current status of the customer (Active, Churned, New Joined)',
+  paymentDate: 'Date when the payment was processed (MM/DD/YYYY). Must fall within the selected month for the table view.',
+  customerStatus: 'Customer-level status derived from all their subscriptions. Active: at least one subscription is Recurring or New Subscription. Churned: all subscriptions are Cancelled or Refunded. New Joined: first-time paying customer this month.',
   name: 'Customer full name for identification',
   email: 'Customer email address for communication',
   product: 'Name of the Pabbly product/service the customer is subscribed to',
   plan: 'Specific subscription plan tier or package name',
   paymentGateway: 'Payment processor used for the transaction (PayPal, Stripe, RazorPay)',
-  previousMonthMRR: 'Monthly Recurring Revenue amount for the previous month',
-  currentMonthMRR: 'Monthly Recurring Revenue amount for the current month',
+  previousMonthMRR: 'MRR from the previous month (e.g., September when October is selected). Shown per subscription.',
+  currentMonthMRR: 'MRR in the selected month (e.g., October when October is selected). Shown per subscription.',
   frequency: 'Billing frequency - Monthly or Yearly subscription cycle',
-  advancePayment: 'Remaining advance payment amount for yearly subscriptions (calculated as remaining months × monthly amount)',
-  subscriptionStatus: 'Status of the subscription (Recurring, New Subscription, Cancelled, Refunded)'
+  advancePayment: 'For yearly plans, remaining prepaid amount (remaining months × per‑month amount). "-" for monthly plans.',
+  subscriptionStatus: 'Payment Status at subscription level. Recurring: ongoing billing this month; New Subscription: first paid month; Cancelled: stopped with no current MRR; Refunded: payment reversed, current MRR is $0.',
 };
 
 export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedProduct = 'All', selectedPlan = 'All' }) {
   const theme = useTheme();
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -261,10 +382,11 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
   // Helpers
   const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-  const getPrevMonthLabels = (monthIndex) => {
-    const prev1 = (monthIndex + 11) % 12;
-    const prev2 = (monthIndex + 10) % 12;
-    return [monthNames[prev1], monthNames[prev2]];
+  const getMonthLabels = (monthIndex) => {
+    const selectedMonthName = monthNames[monthIndex];
+    const previousMonthIndex = (monthIndex + 11) % 12;
+    const previousMonthName = monthNames[previousMonthIndex];
+    return [selectedMonthName, previousMonthName];
   };
 
   // Filtering: Month/Year only adjust headers; Product/Plan filter rows
@@ -305,14 +427,15 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
   };
 
   return (
-    <Card
-      sx={{
-        p: 3,
-        borderRadius: 4,
-        boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
-        backgroundColor: theme.palette.background.paper,
-      }}
-    >
+    <>
+      <Card
+        sx={{
+          p: 3,
+          borderRadius: 4,
+          boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
+          backgroundColor: theme.palette.background.paper,
+        }}
+      >
       <Box sx={{ mb: 3 }}>
         <Typography
           variant="h5"
@@ -336,35 +459,32 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
         <Table sx={{ minWidth: 1400 }}>
           <TableHead>
             <TableRow sx={{ backgroundColor: theme.palette.grey[100] }}>
-              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 180 }}>
-                Payment Date / Customer Status
+              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 140 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+                  <span>Payment Date</span>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 400 }}>Payment Status</span>
+                </Box>
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 200 }}>
-                Name / Email
+                Email / Name
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 150 }}>
-                Product
+                Product / Plan
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120 }}>
-                Plan
+                Customer Status
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120 }}>
-                Payment Gateway
+              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'center' }}>
+                {getMonthLabels(selectedMonth)[1]} MRR
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 140 }}>
-                {getPrevMonthLabels(selectedMonth)[0]} MRR
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 160 }}>
-                {getPrevMonthLabels(selectedMonth)[1]} MRR
+              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'center' }}>
+                {getMonthLabels(selectedMonth)[0]} MRR
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 100 }}>
                 Billing Cycle
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120 }}>
+              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'center' }}>
                 Advance Payment
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 140 }}>
-                Subscription Status
               </TableCell>
             </TableRow>
           </TableHead>
@@ -383,22 +503,23 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                   },
                 }}
               >
-                {/* Payment Date / Customer Status */}
+                {/* Payment Date / Payment Status */}
                 <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2 }}>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    <Chip
-                      label={row.customerStatus}
-                      color={getStatusColor(row.customerStatus)}
-                      size="small"
-                      variant="soft"
-                    />
-                    <Typography variant="body2" color="text.secondary">
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+                    <Typography variant="body2" color="text.primary" sx={{ fontWeight: 500 }}>
                       {row.paymentDate || 'Invalid Date'}
                     </Typography>
+                    <Chip
+                      label={row.subscriptionStatus}
+                      color={getSubscriptionColor(row.subscriptionStatus)}
+                      size="small"
+                      variant="soft"
+                      sx={{ height: '22px', fontSize: '0.75rem' }}
+                    />
                   </Box>
                 </TableCell>
 
-                {/* Name / Email */}
+                {/* Email / Name */}
                 <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2 }}>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                     <Typography 
@@ -418,55 +539,49 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                   </Box>
                 </TableCell>
 
-                {/* Product */}
+                {/* Product / Plan */}
+                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2 }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                    <Typography variant="body2" color="text.primary" sx={{ fontWeight: 500 }}>
+                      {row.product}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {row.plan}
+                    </Typography>
+                  </Box>
+                </TableCell>
+
+                {/* Customer Status */}
                 <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2 }}>
                   <Chip
-                    label={row.product}
+                    label={row.customerStatus}
+                    color={getStatusColor(row.customerStatus)}
                     size="small"
                     variant="soft"
-                    color="info"
+                    sx={{ height: '22px', fontSize: '0.75rem' }}
                   />
                 </TableCell>
 
-                {/* Plan */}
-                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2 }}>
-                  <Chip
-                    label={row.plan}
-                    size="small"
-                    variant="soft"
-                    color="info"
-                  />
-                </TableCell>
-
-                {/* Payment Gateway */}
-                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2 }}>
-                  <Typography variant="body2" color="text.primary">
-                    {row.paymentGateway}
-                  </Typography>
-                </TableCell>
-
-                {/* Previous Month MRR (black text) */}
-                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2 }}>
+                {/* Previous Month MRR (black text, center aligned) */}
+                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2, textAlign: 'center' }}>
                   <Typography 
                     variant="body2" 
                     color="text.primary" 
                     sx={{ 
-                      fontWeight: 600,
-                      textAlign: 'right'
+                      fontWeight: 600
                     }}
                   >
                     {row.previousMonthMRR}
                   </Typography>
                 </TableCell>
 
-                {/* Month before previous MRR (black text) */}
-                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2 }}>
+                {/* Selected Month MRR (black text, center aligned) */}
+                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2, textAlign: 'center' }}>
                   <Typography 
                     variant="body2" 
                     color="text.primary" 
                     sx={{ 
-                      fontWeight: 600,
-                      textAlign: 'right'
+                      fontWeight: 600
                     }}
                   >
                     {row.currentMonthMRR}
@@ -480,28 +595,17 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                   </Typography>
                 </TableCell>
 
-                {/* Advance Payment */}
-                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2 }}>
+                {/* Advance Payment (center aligned) */}
+                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2, textAlign: 'center' }}>
                   <Typography 
                     variant="body2" 
                     color="primary.main" 
                     sx={{ 
-                      fontWeight: 600,
-                      textAlign: 'right'
+                      fontWeight: 600
                     }}
                   >
                     {row.advancePayment}
                   </Typography>
-                </TableCell>
-
-                {/* Subscription Status */}
-                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2 }}>
-                  <Chip
-                    label={row.subscriptionStatus}
-                    color={getSubscriptionColor(row.subscriptionStatus)}
-                    size="small"
-                    variant="soft"
-                  />
                 </TableCell>
               </TableRow>
             ))}
@@ -510,20 +614,19 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
       </TableContainer>
 
       {/* Pagination */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="body2" color="text.secondary">Rows per page:</Typography>
-          <Typography variant="body2" color="text.primary">{rowsPerPage}</Typography>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Typography variant="body2" color="text.secondary">
-            Showing {(page * rowsPerPage) + 1} - {Math.min((page + 1) * rowsPerPage, filteredData.length)} of {filteredData.length} Records
-          </Typography>
-        </Box>
-      </Box>
+      <TablePagination
+        component="div"
+        count={filteredData.length}
+        page={page}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        rowsPerPageOptions={[25, 50, 100]}
+      />
+    </Card>
 
-      {/* Column Descriptions */}
-      <Box sx={{ mt: 4, p: 3, backgroundColor: theme.palette.grey[50], borderRadius: 2 }}>
+    {/* Column Descriptions Section */}
+    <Card sx={{ mt: 4, p: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
         <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'text.primary' }}>
           Column Descriptions
         </Typography>
@@ -539,7 +642,98 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
             </Box>
           ))}
         </Box>
-      </Box>
     </Card>
+
+    {/* Example Cases Section */}
+    <Card sx={{ mt: 3, p: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+        <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'text.primary' }}>
+          Example Cases (Payment Status vs Customer Status)
+        </Typography>
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 2 }}>
+          <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
+            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>A) New Subscription → Customer Active</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              <strong>Example:</strong> Alice Cooper buys Pabbly Connect on 10/05. Payment Status: New Subscription; Sept MRR: $0, Oct MRR: $19.
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              <strong>Customer Status:</strong> Active (has at least one active subscription).
+            </Typography>
+          </Box>
+          <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
+            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>B) Recurring → Customer Active</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              <strong>Example:</strong> Carol King continues Tier 2 on 10/08. Payment Status: Recurring; Sept MRR: $39, Oct MRR: $39.
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              <strong>Customer Status:</strong> Active.
+            </Typography>
+          </Box>
+          <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
+            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>C) Cancelled → Customer Active (other plan is active)</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              <strong>Example:</strong> Neeraj cancels Tier 1 (Oct MRR: $0) but still has Tier 2 Recurring. Payment Status: Cancelled for Tier 1.
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              <strong>Customer Status:</strong> Active (because another subscription is active).
+            </Typography>
+          </Box>
+          <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
+            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>D) Refunded → Customer Churned</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              <strong>Example:</strong> Ella Fitzgerald gets refund on 10/18 for Starter Plan. Payment Status: Refunded; Oct MRR: $0.
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              <strong>Customer Status:</strong> Churned (all subscriptions are Cancelled/Refunded).
+            </Typography>
+          </Box>
+          <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
+            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>E) Upgraded (MRR increased)</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              <strong>Example:</strong> Nimesh adds Unlimited Plan (New Subscription $79). Sept total MRR: $58; Oct total MRR: $137.
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              <strong>Consolidated:</strong> Upgraded. Individual row shows New Subscription.
+            </Typography>
+          </Box>
+          <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
+            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>F) Downgraded (MRR decreased)</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              <strong>Example:</strong> Neeraj moves from $58 to $39 total MRR. Sept MRR: $58; Oct MRR: $39.
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              <strong>Consolidated:</strong> Downgraded; latest active subscription rows remain Recurring.
+            </Typography>
+          </Box>
+          <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
+            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>G) Yearly plan with Advance Payment</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              <strong>Example:</strong> David Bowie pays yearly for Enterprise Plan ($99/mo). Oct MRR: $99 and Advance Payment shows remaining prepaid.
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              <strong>Status:</strong> Payment Status: Recurring; Customer Status: Active.
+            </Typography>
+          </Box>
+          <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
+            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>H) Multiple Products/Plans</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              <strong>Example:</strong> Frank Sinatra has both Pabbly Connect (Unlimited $79) and Pabbly Email Marketing (Pro $49).
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              <strong>Consolidated:</strong> Shows &quot;Multiple Products&quot; / &quot;Multiple Plans&quot; in consolidated view.
+            </Typography>
+          </Box>
+        </Box>
+        <Box sx={{ mt: 2, p: 2, backgroundColor: theme.palette.primary.lighter, borderRadius: 1 }}>
+          <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: 'primary.darker' }}>
+            Status Rules Summary
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            • Payment Status is per subscription: Recurring, New Subscription, Cancelled, Refunded<br/>
+            • Customer Status is per customer: Active if any subscription is Recurring/New Subscription; Churned only if all are Cancelled/Refunded<br/>
+            • New Joined: First-time paying customer this month
+          </Typography>
+        </Box>
+    </Card>
+    </>
   );
 }
