@@ -15,11 +15,10 @@ import { Iconify } from 'src/components/iconify';
 import PageHeader from 'src/components/page-header/page-header';
 import ErrorBoundary from 'src/components/error-boundary/error-boundary';
 
-import { StatsSummaryTable } from './components/stats-summary-table';
+import { AnalyticsTables } from './components/analytics-tables';
+import { AnalyticsPlanChips } from './components/analytics-plan-chips';
 import { CustomerListsTable } from './components/customer-lists-table';
 import { AnalyticsStatsCards } from './components/analytics-stats-cards';
-import { CustomerDetailsTable } from './components/customer-details-table';
-import { CustomerDetailsDrawer } from './components/customer-details-drawer';
 
 // ----------------------------------------------------------------------
 
@@ -32,12 +31,10 @@ export default function AnalyticsPage() {
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear().toString());
   const [selectedProduct, setSelectedProduct] = useState('All Products');
   const [selectedPlan, setSelectedPlan] = useState('All Plans');
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [analyticsData, setAnalyticsData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [currentTab, setCurrentTab] = useState('sales');
+  const [currentTab, setCurrentTab] = useState('active-customers');
 
   // Available products and plans (using actual product/plan IDs)
   const products = [
@@ -120,16 +117,6 @@ export default function AnalyticsPage() {
     setCurrentTab(newValue);
   };
 
-  const handleViewCustomer = (customerData) => {
-    setSelectedCustomer(customerData);
-    setDrawerOpen(true);
-  };
-
-  const handleCloseDrawer = () => {
-    setDrawerOpen(false);
-    setSelectedCustomer(null);
-  };
-
   const getCustomerDataForTab = () => {
     if (!analyticsData?.customers) return [];
 
@@ -168,9 +155,9 @@ export default function AnalyticsPage() {
 
   const TABS = [
     {
-      value: 'sales',
-      label: 'Sales',
-      icon: <Iconify icon="solar:money-bag-bold" width={24} />,
+      value: 'active-customers',
+      label: 'Active',
+      icon: <Iconify icon="solar:users-group-rounded-bold" width={24} />,
     },
     {
       value: 'new-customers',
@@ -179,18 +166,13 @@ export default function AnalyticsPage() {
     },
     {
       value: 'refunded-customers',
-      label: 'Refunded',
+      label: 'Refund',
       icon: <Iconify icon="solar:money-bag-bold" width={24} />,
     },
     {
       value: 'churned-customers',
-      label: 'Churned/Lost',
+      label: 'Churn',
       icon: <Iconify icon="solar:user-minus-bold" width={24} />,
-    },
-    {
-      value: 'active-customers',
-      label: 'Active',
-      icon: <Iconify icon="solar:users-group-rounded-bold" width={24} />,
     },
     {
       value: 'all-customers',
@@ -390,11 +372,15 @@ export default function AnalyticsPage() {
           <AnalyticsStatsCards analyticsData={analyticsData} />
         )}
 
+        {/* Plan Performance Chips */}
+        {!loading && (
+          <AnalyticsPlanChips analyticsData={analyticsData} />
+        )}
 
-        {/* Stats Summary Table */}
+        {/* Analytics Tables */}
         {!loading && (
           <Box sx={{ mb: 4 }}>
-            <StatsSummaryTable analyticsData={analyticsData} />
+            <AnalyticsTables analyticsData={analyticsData} />
           </Box>
         )}
 
@@ -421,32 +407,15 @@ export default function AnalyticsPage() {
               ))}
             </Tabs>
 
-            {/* Sales Table */}
-            {currentTab === 'sales' && (
-              <CustomerDetailsTable 
-                onViewCustomer={handleViewCustomer}
-                analyticsData={analyticsData}
-              />
-            )}
-
             {/* Customer Lists Tables */}
-            {currentTab !== 'sales' && (
-              <CustomerListsTable 
-                customers={getCustomerDataForTab()}
-                tabType={currentTab}
-                loading={loading}
-              />
-            )}
+            <CustomerListsTable 
+              customers={getCustomerDataForTab()}
+              tabType={currentTab}
+              loading={loading}
+            />
           </Box>
         )}
         </DashboardContent>
-
-        {/* Customer Details Drawer */}
-        <CustomerDetailsDrawer
-          open={drawerOpen}
-          onClose={handleCloseDrawer}
-          customerData={selectedCustomer}
-        />
       </ErrorBoundary>
     </>
   );

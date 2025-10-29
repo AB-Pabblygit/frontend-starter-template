@@ -48,6 +48,7 @@ export const paths = {
   app: {
     root: ROOTS.app,
     analytics: `${ROOTS.app}/analytics`,
+    newAnalytics: `${ROOTS.app}/new-analytics`,
     customerLists: `${ROOTS.app}/customer-lists`,
     requests: `${ROOTS.app}/requests`,
     events: `${ROOTS.app}/events`,

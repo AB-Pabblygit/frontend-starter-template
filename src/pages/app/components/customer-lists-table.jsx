@@ -121,14 +121,6 @@ export function CustomerListsTable({ customers = [], tabType = 'all-customers', 
             </Typography>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <IconButton size="small">
-            <Typography variant="body2">🔍</Typography>
-          </IconButton>
-          <Typography variant="body2" color="primary" sx={{ cursor: 'pointer' }}>
-            Filter
-          </Typography>
-        </Box>
       </Box>
 
       <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 2, backgroundColor: theme.palette.background.paper }}>

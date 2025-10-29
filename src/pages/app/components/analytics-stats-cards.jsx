@@ -1,4 +1,4 @@
-import { Box, Card, useTheme, Typography } from '@mui/material';
+import { Box, Card, Tooltip, useTheme, Typography } from '@mui/material';
 
 // Removed unused import
 
@@ -125,41 +125,49 @@ const getEnhancedStatsData = (theme, summary) => [
     title: 'Previous Month MRR',
     value: `$${summary.previousMRR?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0'}`,
     color: '#1d4ed8',
+    icon: 'solar:history-bold',
   },
   {
     title: 'Active Customers MRR',
     value: `$${summary.totalMRR?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0'}`,
     color: '#1d4ed8',
+    icon: 'solar:dollar-minimalistic-bold',
   },
   {
     title: 'Cancelled Customers MRR',
     value: `$${((summary.totalMRR || 0) - (summary.previousMRR || 0))?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0'}`,
     color: '#1d4ed8',
+    icon: 'solar:chart-down-bold',
   },
   {
     title: 'Revenue Churn %',
     value: `${summary.revenueChurn?.toFixed(1) || '0'}%`,
     color: '#1d4ed8',
+    icon: 'solar:chart-square-bold',
   },
   {
     title: 'Active Customers',
     value: summary.activeCustomers?.toString() || '0',
     color: '#1d4ed8',
+    icon: 'solar:users-group-rounded-bold',
   },
   {
     title: 'User Churn %',
     value: `${summary.userChurn?.toFixed(1) || '0'}%`,
     color: '#1d4ed8',
+    icon: 'solar:user-minus-bold',
   },
   {
     title: 'ARPU',
     value: `$${summary.arpu?.toFixed(2) || '0'}`,
     color: '#1d4ed8',
+    icon: 'solar:wallet-money-bold',
   },
   {
     title: 'Customer LTV',
     value: `$${summary.ltv?.toFixed(2) || '0'}`,
     color: '#1d4ed8',
+    icon: 'solar:wallet-bold',
   },
 ];
 
@@ -177,6 +185,69 @@ export function AnalyticsStatsCards({ analyticsData }) {
 
   const summary = analyticsData.summary || {};
   const statsData = getEnhancedStatsData(theme, summary);
+
+  const getTooltip = (title) => {
+    switch (title) {
+      case 'Previous Month MRR':
+        return (
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Previous Month MRR</Typography>
+            <Typography variant="body2">Total recurring revenue at the start of selected period.</Typography>
+          </Box>
+        );
+      case 'Active Customers MRR':
+        return (
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Active Customers MRR</Typography>
+            <Typography variant="body2">MRR from currently active subscriptions.</Typography>
+          </Box>
+        );
+      case 'Cancelled Customers MRR':
+        return (
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Cancelled MRR</Typography>
+            <Typography variant="body2">MRR lost due to cancellations this period.</Typography>
+          </Box>
+        );
+      case 'Revenue Churn %':
+        return (
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Revenue Churn %</Typography>
+            <Typography variant="body2">Percentage of revenue lost: (Churned MRR / Start MRR) × 100</Typography>
+          </Box>
+        );
+      case 'Active Customers':
+        return (
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Active Customers</Typography>
+            <Typography variant="body2">Customers with active subscriptions.</Typography>
+          </Box>
+        );
+      case 'User Churn %':
+        return (
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Customer Churn %</Typography>
+            <Typography variant="body2">Percentage of customers lost: (Churned / Start Count) × 100</Typography>
+          </Box>
+        );
+      case 'ARPU':
+        return (
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>ARPU</Typography>
+            <Typography variant="body2">Average Revenue Per User = Total MRR / Active Customers</Typography>
+          </Box>
+        );
+      case 'Customer LTV':
+        return (
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Lifetime Value</Typography>
+            <Typography variant="body2">Expected revenue per customer.</Typography>
+          </Box>
+        );
+      default:
+        return null;
+    }
+  };
   
   return (
     <Box
@@ -193,64 +264,74 @@ export function AnalyticsStatsCards({ analyticsData }) {
       }}
     >
       {statsData.map((stat, index) => (
-        <Card
+        <Tooltip
           key={index}
-          sx={{
-            p: 3,
-            borderRadius: 4, // Significantly rounded corners like in the images
-            boxShadow: '0 4px 15px rgba(0,0,0,0.08)', // Soft shadow like in the images
-            transition: 'all 0.3s ease',
-            position: 'relative',
-            overflow: 'hidden',
-            backgroundColor: theme.palette.background.paper,
-            '&:hover': {
-              transform: 'translateY(-5px)',
-              boxShadow: '0 8px 20px rgba(0,0,0,0.12)',
-            },
-            animation: 'fadeIn 0.6s ease',
-            '@keyframes fadeIn': {
-              from: { opacity: 0, transform: 'translateY(10px)' },
-              to: { opacity: 1, transform: 'translateY(0)' },
-            },
-          }}
+          arrow
+          followCursor
+          placement="top"
+          enterDelay={100}
+          leaveDelay={0}
+          title={getTooltip(stat.title)}
         >
-          <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-            <Box sx={{ flex: 1 }}>
-              <Typography
-                variant="body2"
+          <Card
+            sx={{
+              p: 3,
+              borderRadius: 4,
+              boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
+              transition: 'all 0.2s ease',
+              position: 'relative',
+              overflow: 'hidden',
+              backgroundColor: theme.palette.background.paper,
+              cursor: 'help',
+              '&:hover': {
+                transform: 'translateY(-3px)',
+                boxShadow: '0 8px 20px rgba(0,0,0,0.12)',
+              },
+              animation: 'fadeIn 0.6s ease',
+              '@keyframes fadeIn': {
+                from: { opacity: 0, transform: 'translateY(10px)' },
+                to: { opacity: 1, transform: 'translateY(0)' },
+              },
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+              <Box sx={{ flex: 1 }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'text.secondary',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    mb: 1,
+                  }}
+                >
+                  {stat.title}
+                </Typography>
+                <Typography
+                  variant="h4"
+                  sx={{
+                    color: stat.color,
+                    fontSize: '24px',
+                    fontWeight: 700,
+                    m: 0,
+                  }}
+                >
+                  {stat.value}
+                </Typography>
+              </Box>
+              <Iconify
+                icon={stat.icon}
                 sx={{
-                  color: 'text.secondary',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  mb: 1,
-                }}
-              >
-                {stat.title}
-              </Typography>
-              <Typography
-                variant="h4"
-                sx={{
+                  width: 32,
+                  height: 32,
                   color: stat.color,
-                  fontSize: '24px',
-                  fontWeight: 700,
-                  m: 0,
+                  opacity: 0.8,
+                  ml: 1,
                 }}
-              >
-                {stat.value}
-              </Typography>
+              />
             </Box>
-            <Iconify
-              icon={stat.icon}
-              sx={{
-                width: 32,
-                height: 32,
-                color: stat.color,
-                opacity: 0.8,
-                ml: 1,
-              }}
-            />
-          </Box>
-        </Card>
+          </Card>
+        </Tooltip>
       ))}
     </Box>
   );

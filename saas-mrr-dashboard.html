@@ -1,0 +1,1040 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MRR & Churn Dashboard — SaaS Analytics</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="https://unpkg.com/tippy.js@6"></script>
+
+  <style>
+    body { background: #f3f7fb; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    .sidebar { background: linear-gradient(180deg, #09202a 0%, #0d2a38 100%); min-height: 100vh; color: white; }
+    .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 20px rgba(10,25,40,0.08); transition: all 0.3s ease; }
+    .card:hover { box-shadow: 0 8px 30px rgba(10,25,40,0.12); }
+    .pill { background:#dbeafe; color:#1e40af; border-radius:9999px; padding:5px 12px; font-weight:600; font-size:11px; display:inline-block; }
+    .muted { color:#6b7280; }
+    .table-row { border-bottom: 1px solid #f1f5f9; transition: background 0.2s; }
+    .table-row:hover { background: #f8fafc; }
+    .glossy { background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,250,255,0.98)); border-radius:12px; box-shadow: 0 8px 24px rgba(12, 20, 30, 0.1); }
+    .tag { font-weight:600; padding:6px 12px; border-radius:9999px; font-size:11px; white-space: nowrap; }
+    .metric-card { position: relative; overflow: hidden; }
+    .metric-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #3b82f6, #8b5cf6); }
+    .status-badge { display: inline-flex; align-items: center; gap: 4px; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; }
+    @media (max-width: 900px) { .sidebar { display:none; } }
+  </style>
+</head>
+<body class="antialiased">
+
+  <div class="flex min-h-screen">
+
+    <!-- Sidebar -->
+    <aside class="sidebar w-64 p-6">
+      <div class="mb-10">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-bold text-xl shadow-lg">P</div>
+          <div>
+            <div class="text-white font-bold text-lg">Pabbly</div>
+            <div class="text-sm text-gray-400">Subscription Billing</div>
+          </div>
+        </div>
+      </div>
+      <nav class="space-y-2">
+        <a class="flex items-center gap-3 p-3 rounded-xl bg-green-600/20 text-white font-medium" href="#">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zM3 21h8v-6H3v6zM13 21h8V11h-8v10zM13 3v6h8V3h-8z"></path></svg>
+          <span>Dashboard</span>
+        </a>
+        <a class="flex items-center gap-3 p-3 rounded-xl text-gray-300 hover:bg-white/10 transition" href="#">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"></path></svg>
+          <span>Analytics</span>
+        </a>
+        <a class="flex items-center gap-3 p-3 rounded-xl text-gray-300 hover:bg-white/10 transition" href="#">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
+          <span>Customers</span>
+        </a>
+        <a class="flex items-center gap-3 p-3 rounded-xl text-gray-300 hover:bg-white/10 transition" href="#">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94L14.4 2.81c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"></path></svg>
+          <span>Settings</span>
+        </a>
+      </nav>
+      <div class="mt-auto pt-8">
+        <div class="bg-white/10 rounded-xl p-4">
+          <div class="text-sm text-gray-300 mb-2">Need Help?</div>
+          <a href="#" class="text-green-400 text-sm font-medium hover:text-green-300">View Documentation →</a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="flex-1 p-8">
+
+      <!-- Header -->
+      <div class="flex items-start justify-between gap-6 mb-8">
+        <div>
+          <h1 class="text-3xl font-bold text-slate-800">Revenue Analytics Dashboard</h1>
+          <p class="text-sm text-gray-500 mt-2">Track MRR, customer churn, and subscription metrics in real-time</p>
+        </div>
+
+        <div class="flex flex-wrap gap-3 items-center">
+          <div class="bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
+            <label class="text-xs text-gray-500 mr-2">Month</label>
+            <select id="filterMonth" class="text-sm font-medium border-none focus:outline-none bg-transparent"></select>
+          </div>
+
+          <div class="bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
+            <label class="text-xs text-gray-500 mr-2">Year</label>
+            <select id="filterYear" class="text-sm font-medium border-none focus:outline-none bg-transparent"></select>
+          </div>
+
+          <div class="bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
+            <label class="text-xs text-gray-500 mr-2">Product</label>
+            <select id="filterProduct" class="text-sm font-medium border-none focus:outline-none bg-transparent"></select>
+          </div>
+
+          <div class="bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
+            <label class="text-xs text-gray-500 mr-2">View</label>
+            <select id="togglePeriod" class="text-sm font-medium border-none focus:outline-none bg-transparent">
+              <option value="monthly">Monthly (MRR)</option>
+              <option value="annual">Annual (ARR)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key Metrics Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="card metric-card p-6">
+          <div class="text-sm text-gray-500 mb-1">Previous Month MRR</div>
+          <div class="text-3xl font-bold text-blue-600 mb-2" data-tippy-content="<strong>Previous Month MRR</strong><div class='text-sm'>Total recurring revenue at the start of selected period.</div>">$<span id="prevMRR">0</span></div>
+          <div class="text-xs text-green-600 font-medium">↑ <span id="prevMRRChange">0%</span> vs 2 months ago</div>
+        </div>
+
+        <div class="card metric-card p-6">
+          <div class="text-sm text-gray-500 mb-1">Current MRR</div>
+          <div class="text-3xl font-bold text-indigo-600 mb-2" data-tippy-content="<strong>Active Customers MRR</strong><div class='text-sm'>MRR from currently active subscriptions.</div>">$<span id="totalMRR">0</span></div>
+          <div class="text-xs text-green-600 font-medium">↑ <span id="totalMRRChange">0%</span> growth</div>
+        </div>
+
+        <div class="card metric-card p-6">
+          <div class="text-sm text-gray-500 mb-1">Churned MRR</div>
+          <div class="text-3xl font-bold text-red-600 mb-2" data-tippy-content="<strong>Cancelled MRR</strong><div class='text-sm'>MRR lost due to cancellations this period.</div>">$<span id="churnedMRR">0</span></div>
+          <div class="text-xs font-medium"><span class="text-red-600" id="revenueChurn">0%</span> revenue churn</div>
+        </div>
+
+        <div class="card metric-card p-6">
+          <div class="text-sm text-gray-500 mb-1">Net New MRR</div>
+          <div class="text-3xl font-bold text-emerald-600 mb-2" data-tippy-content="<strong>Net New MRR</strong><div class='text-sm'>New + Upgrade - Downgrade - Churned</div>">$<span id="netNewMRR">0</span></div>
+          <div class="text-xs text-gray-500">This period</div>
+        </div>
+
+        <div class="card metric-card p-6">
+          <div class="text-sm text-gray-500 mb-1">Active Customers</div>
+          <div class="text-3xl font-bold text-slate-800 mb-2" data-tippy-content="<strong>Active Customers</strong><div class='text-sm'>Customers with active subscriptions.</div>"><span id="activeCustomers">0</span></div>
+          <div class="text-xs font-medium"><span class="text-gray-600" id="userChurn">0%</span> customer churn</div>
+        </div>
+
+        <div class="card metric-card p-6">
+          <div class="text-sm text-gray-500 mb-1">ARPU</div>
+          <div class="text-3xl font-bold text-purple-600 mb-2" data-tippy-content="<strong>ARPU</strong><div class='text-sm'>Average Revenue Per User</div>">$<span id="arpu">0</span></div>
+          <div class="text-xs text-gray-500">Per customer/month</div>
+        </div>
+
+        <div class="card metric-card p-6">
+          <div class="text-sm text-gray-500 mb-1">Customer LTV</div>
+          <div class="text-3xl font-bold text-pink-600 mb-2" data-tippy-content="<strong>Lifetime Value</strong><div class='text-sm'>Expected revenue per customer</div>">$<span id="ltv">0</span></div>
+          <div class="text-xs text-gray-500">LTV:CAC = <span id="ltvCacRatio">3.2</span>:1</div>
+        </div>
+
+        <div class="card metric-card p-6">
+          <div class="text-sm text-gray-500 mb-1">New Customers</div>
+          <div class="text-3xl font-bold text-cyan-600 mb-2"><span id="newCustomers">0</span></div>
+          <div class="text-xs text-gray-500">This period</div>
+        </div>
+      </div>
+
+      <!-- Analytics Summary -->
+      <section class="card p-6 mb-8">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-bold text-slate-800">MRR Movement Analysis</h2>
+          <div class="text-sm text-gray-500"><span id="summaryFilterText">All Products - Monthly</span></div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+              <tr>
+                <th class="p-4 text-xs font-bold text-gray-600 uppercase tracking-wide">Metric</th>
+                <th class="p-4 text-xs font-bold text-gray-600 uppercase tracking-wide text-right">Value</th>
+                <th class="p-4 text-xs font-bold text-gray-600 uppercase tracking-wide text-right">% of Start MRR</th>
+              </tr>
+            </thead>
+            <tbody id="analyticsSummaryBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Historical Trends Table -->
+      <section class="card p-6 mb-8">
+        <h2 class="text-xl font-bold text-slate-800 mb-6">Historical Monthly Trends</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+              <tr>
+                <th class="p-3 text-xs font-bold text-gray-600 uppercase">Month</th>
+                <th class="p-3 text-xs font-bold text-gray-600 uppercase text-right">MRR</th>
+                <th class="p-3 text-xs font-bold text-gray-600 uppercase text-right">New MRR</th>
+                <th class="p-3 text-xs font-bold text-gray-600 uppercase text-right">Churned MRR</th>
+                <th class="p-3 text-xs font-bold text-gray-600 uppercase text-right">Net Growth</th>
+                <th class="p-3 text-xs font-bold text-gray-600 uppercase text-right">Customers</th>
+                <th class="p-3 text-xs font-bold text-gray-600 uppercase text-right">Churn %</th>
+              </tr>
+            </thead>
+            <tbody id="historicalTrendsBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Customer Tables -->
+      <div class="card p-6 mb-8">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex gap-2 items-center flex-wrap">
+            <button class="tab-btn px-5 py-2 rounded-lg text-sm font-medium transition bg-white shadow-sm border-2 border-blue-500 text-blue-600" data-tab="all">All Customers</button>
+            <button class="tab-btn px-5 py-2 rounded-lg text-sm font-medium transition text-gray-600 hover:bg-gray-50" data-tab="active">Active</button>
+            <button class="tab-btn px-5 py-2 rounded-lg text-sm font-medium transition text-gray-600 hover:bg-gray-50" data-tab="new">New</button>
+            <button class="tab-btn px-5 py-2 rounded-lg text-sm font-medium transition text-gray-600 hover:bg-gray-50" data-tab="upgraded">Upgraded</button>
+            <button class="tab-btn px-5 py-2 rounded-lg text-sm font-medium transition text-gray-600 hover:bg-gray-50" data-tab="downgraded">Downgraded</button>
+            <button class="tab-btn px-5 py-2 rounded-lg text-sm font-medium transition text-gray-600 hover:bg-gray-50" data-tab="churned">Churned</button>
+            <button class="tab-btn px-5 py-2 rounded-lg text-sm font-medium transition text-gray-600 hover:bg-gray-50" data-tab="refunded">Refunded</button>
+          </div>
+
+          <div class="flex gap-3 items-center">
+            <input id="searchCustomer" class="border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" type="search" placeholder="Search customers...">
+            <button id="openGlossary" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2 rounded-lg font-medium shadow-md hover:shadow-lg transition">Glossary</button>
+          </div>
+        </div>
+
+        <div id="tabContent" class="mt-6"></div>
+      </div>
+
+      <!-- Simulator Panel -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div class="lg:col-span-2 card p-6">
+          <h3 class="text-lg font-bold text-slate-800 mb-4">Event Log</h3>
+          <div id="eventLog" class="text-sm max-h-80 overflow-auto space-y-2"></div>
+        </div>
+
+        <aside class="card p-6">
+          <h3 class="text-lg font-bold text-slate-800 mb-4">Simulator</h3>
+
+          <div class="space-y-4">
+            <div>
+              <label class="text-xs font-medium text-gray-600 mb-1 block">Customer</label>
+              <select id="simCustomer" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></select>
+            </div>
+
+            <div>
+              <label class="text-xs font-medium text-gray-600 mb-1 block">Action</label>
+              <select id="simAction" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <option value="signup">New Signup</option>
+                <option value="upgrade">Upgrade Plan</option>
+                <option value="downgrade">Downgrade Plan</option>
+                <option value="cancel">Full Cancellation</option>
+                <option value="refund">Process Refund</option>
+                <option value="reactivate">Reactivate</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-xs font-medium text-gray-600 mb-1 block">Product</label>
+              <select id="simProduct" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></select>
+            </div>
+
+            <div>
+              <label class="text-xs font-medium text-gray-600 mb-1 block">Plan</label>
+              <select id="simPlan" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></select>
+            </div>
+
+            <button id="applySim" class="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white p-3 rounded-lg font-medium shadow-md hover:shadow-lg transition">Apply Action</button>
+            <button id="clearSim" class="w-full bg-gray-100 text-gray-700 p-3 rounded-lg font-medium hover:bg-gray-200 transition">Reset All Data</button>
+          </div>
+        </aside>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Glossary Modal -->
+  <div id="glossaryModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50" style="display: none;">
+    <div class="bg-white rounded-2xl p-8 w-full max-w-4xl glossy max-h-[90vh] overflow-auto">
+      <div class="flex justify-between items-start mb-6">
+        <div>
+          <h3 class="text-2xl font-bold text-slate-800">Metrics Glossary</h3>
+          <p class="text-gray-500 text-sm mt-1">Understand your subscription metrics</p>
+        </div>
+        <button id="closeGlossary" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-blue-50 p-4 rounded-xl">
+          <h4 class="font-bold text-blue-900 mb-2">MRR (Monthly Recurring Revenue)</h4>
+          <p class="text-sm text-blue-800">Predictable revenue generated each month from active subscriptions.</p>
+        </div>
+        <div class="bg-green-50 p-4 rounded-xl">
+          <h4 class="font-bold text-green-900 mb-2">New Customer MRR</h4>
+          <p class="text-sm text-green-800">Revenue from customers who signed up this period.</p>
+        </div>
+        <div class="bg-purple-50 p-4 rounded-xl">
+          <h4 class="font-bold text-purple-900 mb-2">Upgrade MRR (Expansion)</h4>
+          <p class="text-sm text-purple-800">Additional revenue when customers move to higher-priced plans.</p>
+        </div>
+        <div class="bg-orange-50 p-4 rounded-xl">
+          <h4 class="font-bold text-orange-900 mb-2">Downgrade MRR (Contraction)</h4>
+          <p class="text-sm text-orange-800">Revenue lost when customers move to lower-priced plans.</p>
+        </div>
+        <div class="bg-red-50 p-4 rounded-xl">
+          <h4 class="font-bold text-red-900 mb-2">Churned MRR</h4>
+          <p class="text-sm text-red-800">Revenue lost from customers who cancelled completely.</p>
+        </div>
+        <div class="bg-emerald-50 p-4 rounded-xl">
+          <h4 class="font-bold text-emerald-900 mb-2">Net New MRR</h4>
+          <p class="text-sm text-emerald-800">Total MRR change: New + Upgrade - Downgrade - Churned</p>
+        </div>
+        <div class="bg-cyan-50 p-4 rounded-xl">
+          <h4 class="font-bold text-cyan-900 mb-2">ARPU</h4>
+          <p class="text-sm text-cyan-800">Average Revenue Per User = Total MRR / Active Customers</p>
+        </div>
+        <div class="bg-pink-50 p-4 rounded-xl">
+          <h4 class="font-bold text-pink-900 mb-2">LTV (Lifetime Value)</h4>
+          <p class="text-sm text-pink-800">Expected total revenue from a customer over their lifetime.</p>
+        </div>
+        <div class="bg-indigo-50 p-4 rounded-xl">
+          <h4 class="font-bold text-indigo-900 mb-2">Revenue Churn %</h4>
+          <p class="text-sm text-indigo-800">Percentage of revenue lost: (Churned MRR / Start MRR) × 100</p>
+        </div>
+        <div class="bg-slate-50 p-4 rounded-xl">
+          <h4 class="font-bold text-slate-900 mb-2">Customer Churn %</h4>
+          <p class="text-sm text-slate-800">Percentage of customers lost: (Churned / Start Count) × 100</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Products & Plans
+    const PRODUCTS = [
+      { id: 'pem', name: 'Email Marketing', plans: [
+        { id: 'pem-starter', name:'Starter', price: 29 },
+        { id: 'pem-basic', name:'Basic', price: 49 },
+        { id: 'pem-pro', name:'Pro', price: 149 },
+        { id: 'pem-enterprise', name:'Enterprise', price: 499 },
+      ]},
+      { id: 'psb', name: 'Subscription Billing', plans: [
+        { id: 'psb-starter', name:'Starter', price: 9 },
+        { id: 'psb-basic', name:'Basic', price: 19 },
+        { id: 'psb-pro', name:'Pro', price: 79 },
+        { id: 'psb-enterprise', name:'Enterprise', price: 399 },
+      ]},
+      { id: 'pc', name: 'Connect', plans: [
+        { id: 'pc-starter', name:'Starter', price: 4 },
+        { id: 'pc-basic', name:'Basic', price: 9 },
+        { id: 'pc-pro', name:'Pro', price: 29 },
+        { id: 'pc-enterprise', name:'Enterprise', price: 199 },
+      ]},
+      { id: 'pfb', name: 'Form Builder', plans: [
+        { id: 'pfb-starter', name:'Starter', price: 4 },
+        { id: 'pfb-basic', name:'Basic', price: 7 },
+        { id: 'pfb-pro', name:'Pro', price: 39 },
+        { id: 'pfb-enterprise', name:'Enterprise', price: 129 },
+      ]},
+    ];
+
+    const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+    // Generate 50 customers with realistic data
+    function generateCustomers() {
+      const firstNames = ['Emma','Liam','Olivia','Noah','Ava','Ethan','Sophia','Mason','Isabella','William','Mia','James','Charlotte','Oliver','Amelia','Benjamin','Harper','Lucas','Evelyn','Henry','Abigail','Alexander','Emily','Michael','Elizabeth','Daniel','Sofia','Matthew','Avery','Jackson','Ella','Sebastian','Scarlett','David','Grace','Joseph','Chloe','Carter','Victoria','Owen','Riley','Luke','Aria','Gabriel','Lily','Anthony','Aubrey','Dylan','Zoey','Samuel'];
+      const lastNames = ['Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis','Rodriguez','Martinez','Hernandez','Lopez','Gonzalez','Wilson','Anderson','Thomas','Taylor','Moore','Jackson','Martin','Lee','Perez','Thompson','White','Harris','Sanchez','Clark','Ramirez','Lewis','Robinson','Walker','Young','Allen','King','Wright','Scott','Torres','Nguyen','Hill','Flores','Green','Adams','Nelson','Baker','Hall','Rivera','Campbell','Mitchell','Carter'];
+      
+      const customers = [];
+      const today = new Date();
+      
+      // Generate 25 active customers with various histories
+      for(let i = 0; i < 25; i++) {
+        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+        const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+        const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${Math.floor(Math.random()*99)}@${['gmail.com','yahoo.com','outlook.com','company.com','business.org'][Math.floor(Math.random()*5)]}`;
+        
+        const productIdx = Math.floor(Math.random() * PRODUCTS.length);
+        const product = PRODUCTS[productIdx];
+        const planIdx = Math.floor(Math.random() * product.plans.length);
+        const plan = product.plans[planIdx];
+        
+        // Random start date between 1-12 months ago
+        const monthsAgo = Math.floor(Math.random() * 12) + 1;
+        const startDate = new Date(today.getFullYear(), today.getMonth() - monthsAgo, Math.floor(Math.random() * 28) + 1);
+        const startStr = startDate.toISOString().split('T')[0];
+        
+        const subscriptions = [{
+          id: 's' + i + '_1',
+          productId: product.id,
+          planId: plan.id,
+          monthly: plan.price,
+          start: startStr,
+          end: null,
+          active: true
+        }];
+        
+        // Some customers have upgrade history
+        if(Math.random() > 0.7 && planIdx > 0) {
+          const oldPlan = product.plans[planIdx - 1];
+          const upgradeDate = new Date(startDate.getTime() + (Math.random() * 90 * 24 * 60 * 60 * 1000));
+          subscriptions[0].start = upgradeDate.toISOString().split('T')[0];
+          subscriptions.unshift({
+            id: 's' + i + '_0',
+            productId: product.id,
+            planId: oldPlan.id,
+            monthly: oldPlan.price,
+            start: startStr,
+            end: upgradeDate.toISOString().split('T')[0],
+            active: false
+          });
+        }
+        
+        // Generate transaction history
+        const transactions = [];
+        let currentDate = new Date(startDate);
+        while(currentDate < today) {
+          const activeSub = subscriptions.find(s => {
+            const sDate = new Date(s.start);
+            const eDate = s.end ? new Date(s.end) : null;
+            return sDate <= currentDate && (!eDate || eDate >= currentDate);
+          });
+          if(activeSub) {
+            transactions.push({
+              date: currentDate.toISOString().split('T')[0],
+              amount: activeSub.monthly,
+              type: 'invoice',
+              refunded: false
+            });
+          }
+          currentDate.setMonth(currentDate.getMonth() + 1);
+        }
+        
+        customers.push({
+          id: 'c' + (i + 1),
+          email,
+          name: `${firstName} ${lastName}`,
+          subscriptions,
+          transactions
+        });
+      }
+      
+      // Generate 25 historical/churned customers
+      for(let i = 25; i < 50; i++) {
+        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+        const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+        const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${Math.floor(Math.random()*99)}@${['gmail.com','yahoo.com','hotmail.com','icloud.com'][Math.floor(Math.random()*4)]}`;
+        
+        const productIdx = Math.floor(Math.random() * PRODUCTS.length);
+        const product = PRODUCTS[productIdx];
+        const planIdx = Math.floor(Math.random() * product.plans.length);
+        const plan = product.plans[planIdx];
+        
+        const monthsAgo = Math.floor(Math.random() * 8) + 2;
+        const startDate = new Date(today.getFullYear(), today.getMonth() - monthsAgo, Math.floor(Math.random() * 28) + 1);
+        const duration = Math.floor(Math.random() * 5) + 1;
+        const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + duration, startDate.getDate());
+        
+        const subscriptions = [{
+          id: 's' + i + '_1',
+          productId: product.id,
+          planId: plan.id,
+          monthly: plan.price,
+          start: startDate.toISOString().split('T')[0],
+          end: endDate.toISOString().split('T')[0],
+          active: false
+        }];
+        
+        const transactions = [];
+        let currentDate = new Date(startDate);
+        while(currentDate < endDate) {
+          transactions.push({
+            date: currentDate.toISOString().split('T')[0],
+            amount: plan.price,
+            type: 'invoice',
+            refunded: Math.random() > 0.9 // 10% chance of refund
+          });
+          currentDate.setMonth(currentDate.getMonth() + 1);
+        }
+        
+        customers.push({
+          id: 'c' + (i + 1),
+          email,
+          name: `${firstName} ${lastName}`,
+          subscriptions,
+          transactions
+        });
+      }
+      
+      return customers;
+    }
+
+    let customers = generateCustomers();
+
+    // State management
+    const state = {
+      monthIdx: (new Date()).getMonth(),
+      year: (new Date()).getFullYear(),
+      product: 'all',
+      period: 'monthly',
+      events: [],
+      snapshot: JSON.parse(JSON.stringify(customers))
+    };
+
+    // Utility functions
+    function formatCurrency(v) { return (Math.round(v*100)/100).toLocaleString('en-US'); }
+    function toFixed(v, d=1){ return (Math.round(v*(10**d))/(10**d)).toFixed(d); }
+    function parseDate(s){ if(!s) return null; return new Date(s + 'T00:00:00'); }
+    function inPeriod(dateStr, year, monthIdx){
+      if(!dateStr) return false;
+      const d = parseDate(dateStr);
+      if(!d) return false;
+      return d.getUTCFullYear() === year && d.getUTCMonth() === monthIdx;
+    }
+
+    // Calculate metrics for a specific month/year
+    function computeMetrics(year, month, productFilter = 'all') {
+      const startRef = new Date(Date.UTC(year, month - 1, 15));
+      const endRef = new Date(Date.UTC(year, month, 15));
+      
+      let startMRR = 0, endMRR = 0, newMRR = 0, upgradeMRR = 0, downgradeMRR = 0, churnedMRR = 0;
+      let customersAtStart = 0, customersAtEnd = 0, newCustomers = 0, churnedCount = 0;
+      
+      customers.forEach(c => {
+        let startCustomerMRR = 0, endCustomerMRR = 0;
+        let hadSubAtStart = false, hasSubAtEnd = false;
+        let isNewThisMonth = false, isChurnedThisMonth = false;
+        
+        c.subscriptions.forEach(sub => {
+          if(productFilter !== 'all' && sub.productId !== productFilter) return;
+          
+          const sDate = parseDate(sub.start);
+          const eDate = sub.end ? parseDate(sub.end) : null;
+          
+          // Active at period start
+          if(sDate && sDate <= startRef && (!eDate || eDate >= startRef)) {
+            startCustomerMRR += sub.monthly;
+            hadSubAtStart = true;
+          }
+          
+          // Active at period end
+          if(sDate && sDate <= endRef && (!eDate || eDate >= endRef)) {
+            endCustomerMRR += sub.monthly;
+            hasSubAtEnd = true;
+          }
+          
+          // New subscription this month
+          if(inPeriod(sub.start, year, month)) {
+            newMRR += sub.monthly;
+            if(!hadSubAtStart) isNewThisMonth = true;
+          }
+          
+          // Churned this month
+          if(inPeriod(sub.end, year, month) && !hasSubAtEnd) {
+            churnedMRR += sub.monthly;
+            isChurnedThisMonth = true;
+          }
+        });
+        
+        startMRR += startCustomerMRR;
+        endMRR += endCustomerMRR;
+        
+        if(hadSubAtStart) customersAtStart++;
+        if(hasSubAtEnd) customersAtEnd++;
+        if(isNewThisMonth) newCustomers++;
+        if(isChurnedThisMonth && !hasSubAtEnd) churnedCount++;
+        
+        // Upgrade/downgrade detection
+        const delta = endCustomerMRR - startCustomerMRR;
+        if(delta > 0 && !isNewThisMonth) {
+          upgradeMRR += delta;
+        } else if(delta < 0 && !isChurnedThisMonth) {
+          downgradeMRR += Math.abs(delta);
+        }
+      });
+      
+      const netNewMRR = newMRR + upgradeMRR - downgradeMRR - churnedMRR;
+      const revenueChurnPercent = startMRR > 0 ? (churnedMRR / startMRR) * 100 : 0;
+      const customerChurnPercent = customersAtStart > 0 ? (churnedCount / customersAtStart) * 100 : 0;
+      const arpu = customersAtEnd > 0 ? endMRR / customersAtEnd : 0;
+      const avgLifetime = customerChurnPercent > 0 ? 100 / customerChurnPercent : 24;
+      const ltv = arpu * avgLifetime;
+      const cac = 50; // sample
+      const ltvCac = cac > 0 ? ltv / cac : 0;
+      
+      return {
+        startMRR, endMRR, newMRR, upgradeMRR, downgradeMRR, churnedMRR, netNewMRR,
+        customersAtStart, customersAtEnd, newCustomers, churnedCount,
+        revenueChurnPercent, customerChurnPercent, arpu, ltv, ltvCac
+      };
+    }
+
+    // Populate filter controls
+    function populateFilters() {
+      const mSel = document.getElementById('filterMonth');
+      monthNames.forEach((m, idx) => {
+        const o = document.createElement('option');
+        o.value = idx; o.text = m;
+        if(idx === state.monthIdx) o.selected = true;
+        mSel.appendChild(o);
+      });
+
+      const ySel = document.getElementById('filterYear');
+      const thisYear = state.year;
+      for(let y = thisYear; y >= thisYear - 2; y--){
+        const o = document.createElement('option');
+        o.value = y; o.text = y;
+        if(y === state.year) o.selected = true;
+        ySel.appendChild(o);
+      }
+
+      const prodSel = document.getElementById('filterProduct');
+      prodSel.add(new Option('All Products','all'));
+      PRODUCTS.forEach(p => prodSel.add(new Option(p.name, p.id)));
+
+      const simProd = document.getElementById('simProduct');
+      const simPlan = document.getElementById('simPlan');
+      simProd.add(new Option('Select product',''));
+      simPlan.add(new Option('Select plan',''));
+      PRODUCTS.forEach(p => {
+        simProd.add(new Option(p.name, p.id));
+        p.plans.forEach(pl => {
+          simPlan.add(new Option(`${p.name} — ${pl.name} ($${pl.price}/mo)`, `${p.id}::${pl.id}`));
+        });
+      });
+
+      refreshCustomerSelect();
+    }
+
+    function refreshCustomerSelect(){
+      const sel = document.getElementById('simCustomer');
+      sel.innerHTML = '';
+      sel.add(new Option('— Select customer —',''));
+      customers.forEach(c => sel.add(new Option(`${c.name} — ${c.email}`, c.id)));
+      sel.add(new Option('Create new customer','__new__'));
+    }
+
+    // Render main metrics
+    function renderMetrics(){
+      const current = computeMetrics(state.year, state.monthIdx, state.product);
+      const previous = computeMetrics(state.year, state.monthIdx - 1, state.product);
+      
+      document.getElementById('prevMRR').textContent = formatCurrency(current.startMRR);
+      document.getElementById('totalMRR').textContent = formatCurrency(current.endMRR);
+      document.getElementById('churnedMRR').textContent = formatCurrency(current.churnedMRR);
+      document.getElementById('revenueChurn').textContent = toFixed(current.revenueChurnPercent, 1) + '%';
+      document.getElementById('activeCustomers').textContent = current.customersAtEnd;
+      document.getElementById('userChurn').textContent = toFixed(current.customerChurnPercent, 1) + '%';
+      document.getElementById('arpu').textContent = formatCurrency(current.arpu);
+      document.getElementById('ltv').textContent = formatCurrency(current.ltv);
+      document.getElementById('netNewMRR').textContent = formatCurrency(current.netNewMRR);
+      document.getElementById('newCustomers').textContent = current.newCustomers;
+      document.getElementById('ltvCacRatio').textContent = toFixed(current.ltvCac, 1);
+      
+      const mrrGrowth = previous.endMRR > 0 ? ((current.endMRR - previous.endMRR) / previous.endMRR) * 100 : 0;
+      document.getElementById('totalMRRChange').textContent = toFixed(Math.abs(mrrGrowth), 1) + '%';
+      
+      const prevMRRChange = previous.startMRR > 0 ? ((current.startMRR - previous.startMRR) / previous.startMRR) * 100 : 0;
+      document.getElementById('prevMRRChange').textContent = toFixed(Math.abs(prevMRRChange), 1) + '%';
+      
+      // Analytics summary
+      const tbody = document.getElementById('analyticsSummaryBody');
+      tbody.innerHTML = '';
+      const rows = [
+        ['Starting MRR', '$' + formatCurrency(current.startMRR), '100%'],
+        ['New Customer MRR', '$' + formatCurrency(current.newMRR), toFixed((current.newMRR/current.startMRR)*100, 1) + '%'],
+        ['Upgrade MRR (Expansion)', '$' + formatCurrency(current.upgradeMRR), toFixed((current.upgradeMRR/current.startMRR)*100, 1) + '%'],
+        ['Downgrade MRR (Contraction)', '-$' + formatCurrency(current.downgradeMRR), '-' + toFixed((current.downgradeMRR/current.startMRR)*100, 1) + '%'],
+        ['Churned MRR', '-$' + formatCurrency(current.churnedMRR), '-' + toFixed((current.churnedMRR/current.startMRR)*100, 1) + '%'],
+        ['Net New MRR', '$' + formatCurrency(current.netNewMRR), toFixed((current.netNewMRR/current.startMRR)*100, 1) + '%'],
+        ['Ending MRR', '$' + formatCurrency(current.endMRR), toFixed((current.endMRR/current.startMRR)*100, 1) + '%'],
+      ];
+
+      rows.forEach((r, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = 'table-row';
+        const isTotal = idx === 0 || idx === rows.length - 1;
+        tr.innerHTML = `
+          <td class="p-4 ${isTotal ? 'font-bold' : ''}">${r[0]}</td>
+          <td class="p-4 text-right font-medium ${isTotal ? 'font-bold' : ''}">${r[1]}</td>
+          <td class="p-4 text-right text-gray-600 ${isTotal ? 'font-bold' : ''}">${r[2]}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      
+      // Historical trends
+      const htBody = document.getElementById('historicalTrendsBody');
+      htBody.innerHTML = '';
+      for(let i = 5; i >= 0; i--) {
+        let m = state.monthIdx - i;
+        let y = state.year;
+        while(m < 0) { m += 12; y--; }
+        const metrics = computeMetrics(y, m, state.product);
+        const tr = document.createElement('tr');
+        tr.className = 'table-row';
+        const growth = metrics.netNewMRR >= 0 ? 'text-green-600' : 'text-red-600';
+        tr.innerHTML = `
+          <td class="p-3 font-medium">${monthNames[m]} ${y}</td>
+          <td class="p-3 text-right font-medium">${formatCurrency(metrics.endMRR)}</td>
+          <td class="p-3 text-right text-green-600">+${formatCurrency(metrics.newMRR)}</td>
+          <td class="p-3 text-right text-red-600">-${formatCurrency(metrics.churnedMRR)}</td>
+          <td class="p-3 text-right ${growth}">${formatCurrency(metrics.netNewMRR)}</td>
+          <td class="p-3 text-right">${metrics.customersAtEnd}</td>
+          <td class="p-3 text-right">${toFixed(metrics.customerChurnPercent, 1)}%</td>
+        `;
+        htBody.appendChild(tr);
+      }
+      
+      const prodName = state.product === 'all' ? 'All Products' : PRODUCTS.find(p => p.id === state.product).name;
+      document.getElementById('summaryFilterText').textContent = `${prodName} - ${state.period === 'monthly' ? 'Monthly' : 'Annual'}`;
+      
+      renderTab();
+    }
+
+    // Render customer table based on active tab
+    let activeTab = 'all';
+    function renderTab(){
+      const container = document.getElementById('tabContent');
+      container.innerHTML = '';
+      
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      tabBtns.forEach(btn => {
+        btn.classList.remove('bg-white', 'shadow-sm', 'border-2', 'border-blue-500', 'text-blue-600');
+        btn.classList.add('text-gray-600', 'hover:bg-gray-50');
+      });
+      
+      const activeBtn = Array.from(tabBtns).find(b => b.dataset.tab === activeTab);
+      if(activeBtn) {
+        activeBtn.classList.remove('text-gray-600', 'hover:bg-gray-50');
+        activeBtn.classList.add('bg-white', 'shadow-sm', 'border-2', 'border-blue-500', 'text-blue-600');
+      }
+
+      const table = document.createElement('div');
+      table.className = 'overflow-x-auto';
+      table.innerHTML = `
+        <table class="w-full text-left">
+          <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+            <tr>
+              <th class="p-4 text-xs font-bold text-gray-600 uppercase">Customer</th>
+              <th class="p-4 text-xs font-bold text-gray-600 uppercase">Subscriptions</th>
+              <th class="p-4 text-xs font-bold text-gray-600 uppercase text-right">MRR</th>
+              <th class="p-4 text-xs font-bold text-gray-600 uppercase text-right">Lifetime Value</th>
+              <th class="p-4 text-xs font-bold text-gray-600 uppercase">Status</th>
+            </tr>
+          </thead>
+          <tbody id="customersTableBody"></tbody>
+        </table>
+      `;
+      container.appendChild(table);
+
+      const tbody = document.getElementById('customersTableBody');
+      const filterText = document.getElementById('searchCustomer').value.trim().toLowerCase();
+      const year = state.year, month = state.monthIdx;
+      
+      const endRef = new Date(Date.UTC(year, month, 15));
+      const startRef = new Date(Date.UTC(year, month - 1, 15));
+
+      const filteredCustomers = customers.filter(c => {
+        if(filterText && !(c.email.toLowerCase().includes(filterText) || c.name.toLowerCase().includes(filterText))) {
+          return false;
+        }
+
+        const hasActiveNow = c.subscriptions.some(s => {
+          const sDate = parseDate(s.start);
+          const eDate = s.end ? parseDate(s.end) : null;
+          return sDate && sDate <= endRef && (!eDate || eDate >= endRef);
+        });
+
+        const hadActiveAtStart = c.subscriptions.some(s => {
+          const sDate = parseDate(s.start);
+          const eDate = s.end ? parseDate(s.end) : null;
+          return sDate && sDate <= startRef && (!eDate || eDate >= startRef);
+        });
+
+        const isNew = c.subscriptions.some(s => inPeriod(s.start, year, month)) && !hadActiveAtStart;
+        const isChurned = c.subscriptions.some(s => inPeriod(s.end, year, month)) && !hasActiveNow;
+        const hasRefund = c.transactions.some(t => t.refunded && inPeriod(t.date, year, month));
+
+        let startMRR = 0, endMRR = 0;
+        c.subscriptions.forEach(s => {
+          const sDate = parseDate(s.start);
+          const eDate = s.end ? parseDate(s.end) : null;
+          if(sDate && sDate <= startRef && (!eDate || eDate >= startRef)) startMRR += s.monthly;
+          if(sDate && sDate <= endRef && (!eDate || eDate >= endRef)) endMRR += s.monthly;
+        });
+        const isUpgraded = endMRR > startMRR && hadActiveAtStart;
+        const isDowngraded = endMRR < startMRR && hasActiveNow;
+
+        if(activeTab === 'all') return true;
+        if(activeTab === 'active') return hasActiveNow;
+        if(activeTab === 'new') return isNew;
+        if(activeTab === 'upgraded') return isUpgraded;
+        if(activeTab === 'downgraded') return isDowngraded;
+        if(activeTab === 'churned') return isChurned;
+        if(activeTab === 'refunded') return hasRefund;
+        return true;
+      });
+
+      filteredCustomers.forEach(c => {
+        let mrr = 0;
+        const activeSubs = [];
+        c.subscriptions.forEach(s => {
+          const sDate = parseDate(s.start);
+          const eDate = s.end ? parseDate(s.end) : null;
+          if(sDate && sDate <= endRef && (!eDate || eDate >= endRef)) {
+            mrr += s.monthly;
+            const prod = PRODUCTS.find(p => p.id === s.productId);
+            const plan = prod?.plans.find(pl => pl.id === s.planId);
+            activeSubs.push(`<div class="mb-1"><span class="pill">${plan?.name || s.planId}</span> <span class="text-xs text-gray-500">${prod?.name || s.productId}</span></div>`);
+          }
+        });
+
+        const hasActiveNow = mrr > 0;
+        const hasRefund = c.transactions.some(t => t.refunded);
+        const isChurned = c.subscriptions.every(s => s.end && parseDate(s.end) <= endRef);
+        
+        const tags = [];
+        if(hasActiveNow) tags.push('<span class="status-badge tag bg-green-100 text-green-700"><span class="status-dot bg-green-500"></span>Active</span>');
+        if(isChurned) tags.push('<span class="status-badge tag bg-red-100 text-red-700"><span class="status-dot bg-red-500"></span>Churned</span>');
+        if(hasRefund) tags.push('<span class="status-badge tag bg-yellow-100 text-yellow-700"><span class="status-dot bg-yellow-500"></span>Refunded</span>');
+        if(c.subscriptions.length > 1) tags.push('<span class="tag bg-purple-100 text-purple-700">Multi-plan</span>');
+
+        const monthsActive = c.transactions.filter(t => !t.refunded).length;
+        const ltv = mrr * monthsActive;
+
+        const tr = document.createElement('tr');
+        tr.className = 'table-row';
+        tr.innerHTML = `
+          <td class="p-4">
+            <div class="font-semibold text-gray-800">${c.name}</div>
+            <div class="text-sm text-gray-500">${c.email}</div>
+          </td>
+          <td class="p-4">
+            ${activeSubs.length > 0 ? activeSubs.join('') : '<span class="text-gray-400 text-sm">No active subscriptions</span>'}
+          </td>
+          <td class="p-4 text-right">
+            <div class="font-bold text-lg text-gray-800">${formatCurrency(mrr)}</div>
+            <div class="text-xs text-gray-500">/month</div>
+          </td>
+          <td class="p-4 text-right">
+            <div class="font-semibold text-gray-700">${formatCurrency(ltv)}</div>
+            <div class="text-xs text-gray-500">${monthsActive} months</div>
+          </td>
+          <td class="p-4">
+            <div class="flex flex-wrap gap-2">${tags.join('')}</div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      if(filteredCustomers.length === 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td colspan="5" class="p-8 text-center text-gray-500">No customers found matching filters</td>';
+        tbody.appendChild(tr);
+      }
+    }
+
+    // Simulation functions
+    function applySimulation(){
+      const action = document.getElementById('simAction').value;
+      const customerId = document.getElementById('simCustomer').value;
+      const planFull = document.getElementById('simPlan').value;
+
+      const nowStr = `${state.year}-${String(state.monthIdx + 1).padStart(2,'0')}-05`;
+
+      let customer;
+      if(customerId === '__new__' || !customerId){
+        const newId = 'c' + (customers.length + 1);
+        customer = {
+          id: newId,
+          email: `demo${Math.floor(Math.random()*10000)}@example.com`,
+          name: 'Demo User',
+          subscriptions: [],
+          transactions: []
+        };
+        customers.push(customer);
+      } else {
+        customer = customers.find(c => c.id === customerId);
+      }
+
+      if(!customer) return;
+
+      let productId = null, planId = null, planObj = null;
+      if(planFull && planFull.includes('::')){
+        [productId, planId] = planFull.split('::');
+        const prod = PRODUCTS.find(p => p.id === productId);
+        planObj = prod?.plans.find(pl => pl.id === planId);
+      }
+
+      function createSub(pId, plId, monthly){
+        return {
+          id: 's' + Math.random().toString(36).slice(2,8),
+          productId: pId,
+          planId: plId,
+          monthly,
+          start: nowStr,
+          end: null,
+          active: true
+        };
+      }
+
+      function addLog(msg){
+        state.events.unshift({ t: new Date().toISOString(), msg });
+        if(state.events.length > 100) state.events.pop();
+        renderEventLog();
+      }
+
+      if(action === 'signup'){
+        if(!planObj) { alert('Select a plan'); return; }
+        const sub = createSub(productId, planId, planObj.price);
+        customer.subscriptions.push(sub);
+        customer.transactions.push({ date: nowStr, amount: planObj.price, type:'invoice', refunded:false});
+        addLog(`✅ New signup: ${customer.email} → ${planObj.name} (${planObj.price}/mo)`);
+      }
+      else if(action === 'upgrade'){
+        if(!planObj) { alert('Select a plan'); return; }
+        const existing = customer.subscriptions.find(s => s.productId === productId && !s.end);
+        if(existing){
+          existing.end = nowStr;
+          existing.active = false;
+          const sub = createSub(productId, planId, planObj.price);
+          customer.subscriptions.push(sub);
+          customer.transactions.push({ date: nowStr, amount: planObj.price, type:'invoice', refunded:false});
+          addLog(`⬆️ Upgrade: ${customer.email} → ${planObj.name} (+${planObj.price - existing.monthly}/mo)`);
+        }
+      }
+      else if(action === 'downgrade'){
+        if(!planObj) { alert('Select a plan'); return; }
+        const existing = customer.subscriptions.find(s => s.productId === productId && !s.end);
+        if(existing){
+          existing.end = nowStr;
+          existing.active = false;
+          const sub = createSub(productId, planId, planObj.price);
+          customer.subscriptions.push(sub);
+          customer.transactions.push({ date: nowStr, amount: planObj.price, type:'invoice', refunded:false});
+          addLog(`⬇️ Downgrade: ${customer.email} → ${planObj.name} (-${existing.monthly - planObj.price}/mo)`);
+        }
+      }
+      else if(action === 'cancel'){
+        customer.subscriptions.forEach(s => {
+          if(!s.end) { s.end = nowStr; s.active = false; }
+        });
+        addLog(`❌ Cancellation: ${customer.email} cancelled all subscriptions`);
+      }
+      else if(action === 'refund'){
+        const last = customer.transactions.slice().reverse().find(t => !t.refunded);
+        if(last){
+          last.refunded = true;
+          addLog(`💰 Refund: ${customer.email} refunded ${last.amount}`);
+        }
+      }
+      else if(action === 'reactivate'){
+        if(!planObj) { alert('Select a plan'); return; }
+        const sub = createSub(productId, planId, planObj.price);
+        customer.subscriptions.push(sub);
+        customer.transactions.push({ date: nowStr, amount: planObj.price, type:'invoice', refunded:false});
+        addLog(`🔄 Reactivation: ${customer.email} reactivated on ${planObj.name}`);
+      }
+
+      refreshCustomerSelect();
+      renderAll();
+    }
+
+    function renderEventLog(){
+      const el = document.getElementById('eventLog');
+      el.innerHTML = '';
+      if(state.events.length === 0){
+        el.innerHTML = '<div class="text-gray-400 text-center py-8">No events yet. Use the simulator to create transactions.</div>';
+        return;
+      }
+      state.events.slice(0, 50).forEach(ev => {
+        const div = document.createElement('div');
+        div.className = 'bg-gray-50 p-3 rounded-lg border border-gray-200';
+        div.innerHTML = `
+          <div class="text-xs text-gray-500 mb-1">${new Date(ev.t).toLocaleString()}</div>
+          <div class="text-sm">${ev.msg}</div>
+        `;
+        el.appendChild(div);
+      });
+    }
+
+    // Event listeners
+    function setupListeners(){
+      document.getElementById('filterMonth').addEventListener('change', e => {
+        state.monthIdx = +e.target.value;
+        renderAll();
+      });
+      
+      document.getElementById('filterYear').addEventListener('change', e => {
+        state.year = +e.target.value;
+        renderAll();
+      });
+      
+      document.getElementById('filterProduct').addEventListener('change', e => {
+        state.product = e.target.value;
+        renderAll();
+      });
+      
+      document.getElementById('togglePeriod').addEventListener('change', e => {
+        state.period = e.target.value;
+        renderAll();
+      });
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeTab = btn.dataset.tab;
+          renderTab();
+        });
+      });
+
+      document.getElementById('searchCustomer').addEventListener('input', () => renderTab());
+      document.getElementById('openGlossary').addEventListener('click', () => {
+        document.getElementById('glossaryModal').style.display = 'flex';
+      });
+      document.getElementById('closeGlossary').addEventListener('click', () => {
+        document.getElementById('glossaryModal').style.display = 'none';
+      });
+      document.getElementById('applySim').addEventListener('click', applySimulation);
+      document.getElementById('clearSim').addEventListener('click', () => {
+        if(confirm('Reset all data to initial state?')){
+          customers = JSON.parse(JSON.stringify(state.snapshot));
+          state.events = [];
+          refreshCustomerSelect();
+          renderAll();
+        }
+      });
+    }
+
+    function renderAll(){
+      renderMetrics();
+      renderEventLog();
+      tippy('[data-tippy-content]', {
+        allowHTML: true,
+        theme: 'light-border',
+        maxWidth: 320,
+        delay: [200, 0]
+      });
+    }
+
+    // Initialize
+    populateFilters();
+    setupListeners();
+    renderAll();
+  </script>
+
+</body>
+</html>

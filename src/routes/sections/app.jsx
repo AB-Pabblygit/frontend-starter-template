@@ -14,6 +14,8 @@ const Dashboard = lazy(() => import('src/pages/app/dashboard'));
 
 const Analytics = lazy(() => import('src/pages/app/analytics'));
 
+const NewAnalytics = lazy(() => import('src/pages/app/new-analytics'));
+
 const CustomerLists = lazy(() => import('src/pages/app/customer-lists'));
 
 const GetHelp = lazy(() => import('src/pages/app/get-help'));
@@ -43,6 +45,8 @@ export const appRoutes = [
       { element: <Dashboard />, index: true },
 
       { path: 'analytics', element: <Analytics /> },
+
+      { path: 'new-analytics', element: <NewAnalytics /> },
 
       { path: 'customer-lists', element: <CustomerLists /> },
 

@@ -38,6 +38,7 @@ export const appNavData = [
     items: [
       { title: 'Dashboard', path: paths.app.root, icon: APPICONS.dashboard },
       { title: 'Analytics', path: paths.app.analytics, icon: APPICONS.analytics },
+      { title: 'New Analytics', path: paths.app.newAnalytics, icon: APPICONS.two },
     ],
   },
 

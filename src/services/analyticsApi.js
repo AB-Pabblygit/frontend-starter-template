@@ -1,4 +1,4 @@
-// Analytics API service for backend communication
+// Analytics API service for database communication
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/analytics';
 
 class AnalyticsApiService {
@@ -7,7 +7,7 @@ class AnalyticsApiService {
   }
 
   /**
-   * Make HTTP request with error handling
+   * Make HTTP request with error handling and authentication
    */
   async makeRequest(endpoint, options = {}) {
     try {
@@ -15,7 +15,7 @@ class AnalyticsApiService {
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': import.meta.env.VITE_API_KEY || 'your-api-key-for-authentication',
+          'Authorization': `Bearer ${AnalyticsApiService.getAuthToken()}`,
           ...options.headers,
         },
         ...options,
@@ -39,6 +39,13 @@ class AnalyticsApiService {
   }
 
   /**
+   * Get authentication token from localStorage or session
+   */
+  static getAuthToken() {
+    return localStorage.getItem('authToken') || sessionStorage.getItem('authToken') || '';
+  }
+
+  /**
    * Build query string from filters
    */
   static buildQueryString(filters = {}) {
@@ -55,6 +62,27 @@ class AnalyticsApiService {
 
   /**
    * Get comprehensive analytics summary
+   * Expected database response structure:
+   * {
+   *   success: true,
+   *   data: {
+   *     startMRR: number,
+   *     endMRR: number,
+   *     newMRR: number,
+   *     upgradeMRR: number,
+   *     downgradeMRR: number,
+   *     churnedMRR: number,
+   *     netNewMRR: number,
+   *     totalCustomers: number,
+   *     activeCustomers: number,
+   *     newCustomers: number,
+   *     churnedCustomers: number,
+   *     refundedRevenue: number,
+   *     overallCAC: number,
+   *     cacPerCustomer: number,
+   *     avgMonthsCustomerRemains: number
+   *   }
+   * }
    */
   async getSummary(filters = {}) {
     const queryString = AnalyticsApiService.buildQueryString(filters);
@@ -63,6 +91,19 @@ class AnalyticsApiService {
 
   /**
    * Get MRR trend over time
+   * Expected database response structure:
+   * {
+   *   success: true,
+   *   data: [
+   *     {
+   *       date: string (YYYY-MM-DD),
+   *       mrr: number,
+   *       newMRR: number,
+   *       churnedMRR: number,
+   *       netNewMRR: number
+   *     }
+   *   ]
+   * }
    */
   async getMRR(filters = {}) {
     const queryString = AnalyticsApiService.buildQueryString(filters);
@@ -71,6 +112,21 @@ class AnalyticsApiService {
 
   /**
    * Get churn analysis and trends
+   * Expected database response structure:
+   * {
+   *   success: true,
+   *   data: {
+   *     customerChurnRate: number,
+   *     revenueChurnRate: number,
+   *     churnTrends: [
+   *       {
+   *         date: string,
+   *         churnedCustomers: number,
+   *         churnedMRR: number
+   *       }
+   *     ]
+   *   }
+   * }
    */
   async getChurn(filters = {}) {
     const queryString = AnalyticsApiService.buildQueryString(filters);
@@ -79,6 +135,22 @@ class AnalyticsApiService {
 
   /**
    * Get metrics breakdown by plan
+   * Expected database response structure:
+   * {
+   *   success: true,
+   *   data: [
+   *     {
+   *       planId: string,
+   *       planName: string,
+   *       productId: string,
+   *       productName: string,
+   *       totalCustomers: number,
+   *       mrr: number,
+   *       churnRate: number,
+   *       avgLifetime: number
+   *     }
+   *   ]
+   * }
    */
   async getPlans(filters = {}) {
     const queryString = AnalyticsApiService.buildQueryString(filters);
@@ -87,6 +159,19 @@ class AnalyticsApiService {
 
   /**
    * Get metrics breakdown by product
+   * Expected database response structure:
+   * {
+   *   success: true,
+   *   data: [
+   *     {
+   *       productId: string,
+   *       productName: string,
+   *       totalCustomers: number,
+   *       mrr: number,
+   *       churnRate: number
+   *     }
+   *   ]
+   * }
    */
   async getProducts(filters = {}) {
     const queryString = AnalyticsApiService.buildQueryString(filters);
@@ -95,6 +180,41 @@ class AnalyticsApiService {
 
   /**
    * Get customer-level metrics
+   * Expected database response structure:
+   * {
+   *   success: true,
+   *   data: [
+   *     {
+   *       id: string,
+   *       name: string,
+   *       email: string,
+   *       status: 'active' | 'cancelled' | 'paused',
+   *       signupDate: string (YYYY-MM-DD),
+   *       planId: string,
+   *       productId: string,
+   *       monthlyRevenue: number,
+   *       subscriptions: [
+   *         {
+   *           id: string,
+   *           productId: string,
+   *           planId: string,
+   *           monthly: number,
+   *           start: string (YYYY-MM-DD),
+   *           end: string (YYYY-MM-DD) | null,
+   *           active: boolean
+   *         }
+   *       ],
+   *       transactions: [
+   *         {
+   *           date: string (YYYY-MM-DD),
+   *           amount: number,
+   *           type: 'invoice' | 'refund',
+   *           refunded: boolean
+   *         }
+   *       ]
+   *     }
+   *   ]
+   * }
    */
   async getCustomers(filters = {}) {
     const queryString = AnalyticsApiService.buildQueryString(filters);
@@ -102,24 +222,8 @@ class AnalyticsApiService {
   }
 
   /**
-   * Generate dummy data for testing (Development only)
-   */
-  async generateDummyData(months = 6, usersPerPlan = 50) {
-    return this.makeRequest('/simulate', {
-      method: 'POST',
-      body: JSON.stringify({ months, usersPerPlan }),
-    });
-  }
-
-  /**
-   * Health check
-   */
-  async healthCheck() {
-    return this.makeRequest('/health');
-  }
-
-  /**
    * Get all analytics data in one request
+   * This is the main method used by the dashboard
    */
   async getAllAnalytics(filters = {}) {
     try {
@@ -144,13 +248,28 @@ class AnalyticsApiService {
         },
         meta: {
           filters,
-          generatedAt: new Date(),
+          generatedAt: new Date().toISOString(),
         },
       };
     } catch (error) {
       console.error('Failed to fetch all analytics:', error);
       throw error;
     }
+  }
+
+  /**
+   * Health check endpoint
+   */
+  async healthCheck() {
+    return this.makeRequest('/health');
+  }
+
+  /**
+   * Update filters and refresh data
+   */
+  async updateFilters(newFilters) {
+    const queryString = AnalyticsApiService.buildQueryString(newFilters);
+    return this.makeRequest(`/refresh?${queryString}`);
   }
 }
 
