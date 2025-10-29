@@ -380,13 +380,12 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
   };
 
   // Helpers
-  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-
   const getMonthLabels = (monthIndex) => {
-    const selectedMonthName = monthNames[monthIndex];
-    const previousMonthIndex = (monthIndex + 11) % 12;
-    const previousMonthName = monthNames[previousMonthIndex];
-    return [selectedMonthName, previousMonthName];
+    const shortMonth = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const currentYear = selectedYear;
+    const prevIndex = (monthIndex + 11) % 12;
+    const prevYear = monthIndex === 0 ? currentYear - 1 : currentYear;
+    return [`${shortMonth[monthIndex]} ${currentYear}`, `${shortMonth[prevIndex]} ${prevYear}`];
   };
 
   // Filtering: Month/Year only adjust headers; Product/Plan filter rows
@@ -426,6 +425,15 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
     }
   };
 
+  const formatDate = (mdy) => {
+    if (!mdy) return 'Invalid Date';
+    const [month, day, year] = mdy.split('/').map((v) => parseInt(v, 10));
+    if (!year || !month || !day) return 'Invalid Date';
+    const dt = new Date(year, month - 1, day);
+    const shortMonth = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${shortMonth[dt.getMonth()]} ${day}, ${year}`;
+  };
+
   return (
     <>
       <Card
@@ -459,20 +467,14 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
         <Table sx={{ minWidth: 1400 }}>
           <TableHead>
             <TableRow sx={{ backgroundColor: theme.palette.grey[100] }}>
-              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 140 }}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
-                  <span>Payment Date</span>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 400 }}>Payment Status</span>
-                </Box>
+              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120 }}>
+                Payment Date
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 200 }}>
                 Email / Name
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 150 }}>
                 Product / Plan
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120 }}>
-                Customer Status
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'center' }}>
                 {getMonthLabels(selectedMonth)[1]} MRR
@@ -485,6 +487,12 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'center' }}>
                 Advance Payment
+              </TableCell>
+              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'right' }}>
+                Payment Status
+              </TableCell>
+              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'right' }}>
+                Customer Status
               </TableCell>
             </TableRow>
           </TableHead>
@@ -503,20 +511,11 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                   },
                 }}
               >
-                {/* Payment Date / Payment Status */}
+                {/* Payment Date */}
                 <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2 }}>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
-                    <Typography variant="body2" color="text.primary" sx={{ fontWeight: 500 }}>
-                      {row.paymentDate || 'Invalid Date'}
-                    </Typography>
-                    <Chip
-                      label={row.subscriptionStatus}
-                      color={getSubscriptionColor(row.subscriptionStatus)}
-                      size="small"
-                      variant="soft"
-                      sx={{ height: '22px', fontSize: '0.75rem' }}
-                    />
-                  </Box>
+                  <Typography variant="body2" color="text.primary" sx={{ fontWeight: 500 }}>
+                    {formatDate(row.paymentDate)}
+                  </Typography>
                 </TableCell>
 
                 {/* Email / Name */}
@@ -549,17 +548,6 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                       {row.plan}
                     </Typography>
                   </Box>
-                </TableCell>
-
-                {/* Customer Status */}
-                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2 }}>
-                  <Chip
-                    label={row.customerStatus}
-                    color={getStatusColor(row.customerStatus)}
-                    size="small"
-                    variant="soft"
-                    sx={{ height: '22px', fontSize: '0.75rem' }}
-                  />
                 </TableCell>
 
                 {/* Previous Month MRR (black text, center aligned) */}
@@ -606,6 +594,28 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                   >
                     {row.advancePayment}
                   </Typography>
+                </TableCell>
+
+                {/* Payment Status (center aligned) */}
+                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2, textAlign: 'center' }}>
+                  <Chip
+                    label={row.subscriptionStatus}
+                    color={getSubscriptionColor(row.subscriptionStatus)}
+                    size="small"
+                    variant="soft"
+                    sx={{ height: '22px', fontSize: '0.75rem' }}
+                  />
+                </TableCell>
+
+                {/* Customer Status (right aligned) */}
+                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2, textAlign: 'right' }}>
+                  <Chip
+                    label={row.customerStatus}
+                    color={getStatusColor(row.customerStatus)}
+                    size="small"
+                    variant="soft"
+                    sx={{ height: '22px', fontSize: '0.75rem' }}
+                  />
                 </TableCell>
               </TableRow>
             ))}
