@@ -379,56 +379,72 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
     {/* Column Descriptions Section */}
     <Card sx={{ mt: 4, p: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
         <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'text.primary' }}>
-          Column Descriptions
+          Column Descriptions (Consolidated View)
         </Typography>
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 2 }}>
           <Box>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>Payment Months / Payment Status</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              Payment Months: Comma-separated list of months when payments occurred (e.g., &quot;Oct 2025&quot;). Payment Status: Consolidated status across all subscriptions for this customer.
+              Payment Months: Comma-separated list of months in which payments occurred (e.g., &quot;Oct 2025&quot;).
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              Payment Status: Consolidated status across all subscriptions for this customer.
             </Typography>
           </Box>
           <Box>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>Email / Name</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              Customer email (clickable) and full name. Used as the unique key for consolidation.
+              Customer’s email address (clickable) and full name. Used as the unique key for customer consolidation.
             </Typography>
           </Box>
           <Box>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>Product / Plan</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              Shows single product/plan if all subscriptions are the same, otherwise &quot;Multiple Products&quot; / &quot;Multiple Plans&quot;.
+              Displays a single product/plan if all subscriptions are identical; otherwise shows &quot;Multiple Products&quot; or &quot;Multiple Plans.&quot;
             </Typography>
           </Box>
           <Box>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>Customer Status</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              Active: Customer has at least one subscription with status &quot;Recurring&quot; or &quot;New Subscription&quot;. Churned: All subscriptions are &quot;Cancelled&quot; or &quot;Refunded&quot;.
+              Active: Customer has at least one subscription with status Recurring or New Subscription.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              Churned: All subscriptions are Cancelled or Refunded.
             </Typography>
           </Box>
           <Box>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>September MRR / October MRR</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              Total MRR across all subscriptions for the previous month (September) and selected month (October). Calculated by summing individual subscription MRRs.
+              Displays total MRR across all subscriptions for:
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>Previous month (September)</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ ml: 2, mb: 1 }}>Selected month (October)</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              Calculated by summing the MRR of all individual subscriptions.
             </Typography>
           </Box>
           <Box>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>Billing Cycle</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              Shows &quot;Monthly&quot;, &quot;Yearly&quot;, or &quot;Mixed&quot; if customer has subscriptions with different billing frequencies.
+              Indicates the customer’s billing frequency — Monthly, Yearly, or Mixed (if different subscriptions have different cycles).
             </Typography>
           </Box>
           <Box>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>Advance Payment</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              Sum of remaining prepaid amounts for all yearly subscriptions. Shows &quot;-&quot; if no yearly plans or no remaining advance.
+              Sum of remaining prepaid amounts for all yearly subscriptions. Displays &quot;—&quot; if there are no yearly plans or no remaining advance balance.
             </Typography>
           </Box>
           <Box>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>Subscription Status</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              Consolidated status: Upgraded (Oct MRR &gt; Sept MRR), Downgraded (Oct MRR &lt; Sept MRR), Recurring (same MRR), New Subscription (Sept MRR = 0, Oct MRR &gt; 0), Cancelled/Refunded (no active subscriptions).
+              Represents the consolidated subscription status across all customer subscriptions:
             </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>Upgraded: Oct MRR &gt; Sept MRR</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>Downgraded: Oct MRR &lt; Sept MRR</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>Recurring: Oct MRR = Sept MRR</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>New Subscription: Sept MRR = 0, Oct MRR &gt; 0</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>Cancelled / Refunded: No active subscriptions remaining</Typography>
           </Box>
         </Box>
     </Card>
@@ -447,13 +463,13 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Chip size="small" variant="soft" color="success" label="Active" />
                 <Typography variant="body2" color="text.secondary">
-                  Customer has at least one subscription with status &quot;Recurring&quot; or &quot;New Subscription&quot;
+                  Customer has at least one subscription with status Recurring or New Subscription.
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Chip size="small" variant="soft" color="error" label="Churned" />
                 <Typography variant="body2" color="text.secondary">
-                  All subscriptions are &quot;Cancelled&quot; or &quot;Refunded&quot;
+                  All subscriptions are Cancelled or Refunded.
                 </Typography>
               </Box>
             </Box>
@@ -466,37 +482,37 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Chip size="small" variant="soft" color="success" label="Upgraded" />
                 <Typography variant="body2" color="text.secondary">
-                  Total MRR increased from previous month
+                  Total MRR increased compared to the previous month.
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Chip size="small" variant="soft" color="warning" label="Downgraded" />
                 <Typography variant="body2" color="text.secondary">
-                  Total MRR decreased from previous month
+                  Total MRR decreased compared to the previous month.
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Chip size="small" variant="soft" color="default" label="Recurring" />
                 <Typography variant="body2" color="text.secondary">
-                  Total MRR remained the same
+                  Total MRR remained the same between months.
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Chip size="small" variant="soft" color="info" label="New Subscription" />
                 <Typography variant="body2" color="text.secondary">
-                  Previous month MRR was $0, current month MRR &gt; $0
+                  Previous month MRR = $0; current month MRR &gt; $0.
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Chip size="small" variant="soft" color="error" label="Cancelled" />
                 <Typography variant="body2" color="text.secondary">
-                  No active subscriptions, all cancelled
+                  No active subscriptions; all have been cancelled.
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Chip size="small" variant="soft" color="warning" label="Refunded" />
                 <Typography variant="body2" color="text.secondary">
-                  No active subscriptions, at least one refunded
+                  No active subscriptions; at least one has been refunded.
                 </Typography>
               </Box>
             </Box>
@@ -512,75 +528,49 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 2 }}>
           <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
             <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Case 1: Upgraded Customer</Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              <strong>Scenario:</strong> Nimesh has 3 subscriptions: Tier 1 ($19), Tier 2 ($39), and adds Unlimited Plan ($79) in October.
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              <strong>Consolidated View:</strong> Sept MRR: $58, Oct MRR: $137. Status: Upgraded. Customer Status: Active.
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              <strong>Logic:</strong> Oct MRR ($137) &gt; Sept MRR ($58), so status is &quot;Upgraded&quot;. Customer has active subscriptions, so &quot;Active&quot;.
-            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Scenario: Nimesh has three subscriptions — Tier 1 ($19), Tier 2 ($39), and adds Unlimited Plan ($79) in October.</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Consolidated View: Sept MRR: $58 → Oct MRR: $137</Typography>
+            <Typography variant="body2" color="success.main">Status: Upgraded</Typography>
+            <Typography variant="body2" color="success.main">Customer Status: Active</Typography>
+            <Typography variant="body2" color="text.secondary">Logic: Since Oct MRR ($137) &gt; Sept MRR ($58), status = Upgraded. Customer still has active subscriptions, so status = Active.</Typography>
           </Box>
           <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
             <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Case 2: Mixed Status Customer</Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              <strong>Scenario:</strong> Neeraj has Tier 2 (Recurring $39) and Tier 1 (Cancelled $0) and Unlimited (Refunded $19).
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              <strong>Consolidated View:</strong> Sept MRR: $58, Oct MRR: $39. Status: Downgraded. Customer Status: Active.
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              <strong>Logic:</strong> Oct MRR ($39) &lt; Sept MRR ($58), so &quot;Downgraded&quot;. Has active subscription (Tier 2), so &quot;Active&quot;.
-            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Scenario: Neeraj has Tier 2 (Recurring $39), Tier 1 (Cancelled $0), and Unlimited (Refunded $19).</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Consolidated View: Sept MRR: $58 → Oct MRR: $39</Typography>
+            <Typography variant="body2" color="warning.main">Status: Downgraded</Typography>
+            <Typography variant="body2" color="success.main">Customer Status: Active</Typography>
+            <Typography variant="body2" color="text.secondary">Logic: Oct MRR ($39) &lt; Sept MRR ($58), so status = Downgraded. Since at least one subscription (Tier 2) is active, the customer remains Active.</Typography>
           </Box>
           <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
             <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Case 3: Churned Customer</Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              <strong>Scenario:</strong> Mike has Pro Plan that gets refunded in October.
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              <strong>Consolidated View:</strong> Sept MRR: $49, Oct MRR: $0. Status: Refunded. Customer Status: Churned.
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              <strong>Logic:</strong> All subscriptions are &quot;Refunded&quot;, so status is &quot;Refunded&quot;. No active subscriptions, so &quot;Churned&quot;.
-            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Scenario: Mike’s Pro Plan was refunded in October.</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Consolidated View: Sept MRR: $49 → Oct MRR: $0</Typography>
+            <Typography variant="body2" color="warning.main">Status: Refunded</Typography>
+            <Typography variant="body2" color="error.main">Customer Status: Churned</Typography>
+            <Typography variant="body2" color="text.secondary">Logic: All subscriptions are Refunded, so consolidated status = Refunded. With no active subscriptions, customer status = Churned.</Typography>
           </Box>
           <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
             <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Case 4: New Customer</Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              <strong>Scenario:</strong> Hardik signs up for Unlimited Plan in October.
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              <strong>Consolidated View:</strong> Sept MRR: $0, Oct MRR: $79. Status: New Subscription. Customer Status: Active.
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              <strong>Logic:</strong> Sept MRR = $0 and Oct MRR &gt; $0, so &quot;New Subscription&quot;. Has active subscription, so &quot;Active&quot;.
-            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Scenario: Hardik signs up for the Unlimited Plan in October.</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Consolidated View: Sept MRR: $0 → Oct MRR: $79</Typography>
+            <Typography variant="body2" color="info.main">Status: New Subscription</Typography>
+            <Typography variant="body2" color="success.main">Customer Status: Active</Typography>
+            <Typography variant="body2" color="text.secondary">Logic: Sept MRR = $0 and Oct MRR &gt; $0, so status = New Subscription. The customer now has an active subscription, so status = Active.</Typography>
           </Box>
           <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
             <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Case 5: Yearly Plan Customer</Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              <strong>Scenario:</strong> Lisa has Enterprise Plan ($99/month) paid yearly with 10 months remaining.
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              <strong>Consolidated View:</strong> Sept MRR: $99, Oct MRR: $99. Status: Recurring. Advance Payment: $990.
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              <strong>Logic:</strong> MRR unchanged, so &quot;Recurring&quot;. Advance Payment = 10 months × $99 = $990.
-            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Scenario: Lisa has an Enterprise Plan ($99/month) paid yearly with 10 months remaining.</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Consolidated View: Sept MRR: $99 → Oct MRR: $99</Typography>
+            <Typography variant="body2" color="default.main">Status: Recurring</Typography>
+            <Typography variant="body2" color="text.secondary">Advance Payment: $990</Typography>
+            <Typography variant="body2" color="text.secondary">Logic: MRR is unchanged, so status = Recurring. Advance payment = 10 months × $99 = $990.</Typography>
           </Box>
           <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
             <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Case 6: Multiple Products</Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              <strong>Scenario:</strong> Customer has both Pabbly Connect and Pabbly Workflow subscriptions.
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              <strong>Consolidated View:</strong> Product: &quot;Multiple Products&quot;, Plan: &quot;Multiple Plans&quot;.
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              <strong>Logic:</strong> When customer has different products/plans, shows &quot;Multiple&quot; instead of specific names.
-            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Scenario: Customer subscribes to both Pabbly Connect and Pabbly Workflow.</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Consolidated View:<br/>Product: Multiple Products<br/>Plan: Multiple Plans</Typography>
+            <Typography variant="body2" color="text.secondary">Logic: When a customer has different products or plans, display “Multiple” instead of individual names.</Typography>
           </Box>
         </Box>
         <Box sx={{ mt: 2, p: 2, backgroundColor: theme.palette.primary.lighter, borderRadius: 1 }}>
@@ -588,9 +578,9 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
             Key Rules Summary
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            • Customer Status = &quot;Active&quot; if ANY subscription is &quot;Recurring&quot; or &quot;New Subscription&quot;<br/>
-            • Customer Status = &quot;Churned&quot; only if ALL subscriptions are &quot;Cancelled&quot; or &quot;Refunded&quot;<br/>
-            • Subscription Status is based on MRR comparison: Upgraded (↑), Downgraded (↓), Recurring (=), New Subscription (0→+), Cancelled/Refunded (no active)
+            Customer Status = Active → If any subscription is Recurring or New Subscription.<br/>
+            Customer Status = Churned → If all subscriptions are Cancelled or Refunded.<br/>
+            Subscription Status (per customer) → Based on MRR comparison: Upgraded (↑ Oct &gt; Sept), Downgraded (↓ Oct &lt; Sept), Recurring (= Oct = Sept), New Subscription (0 → +), Cancelled / Refunded (No active MRR)
           </Typography>
         </Box>
     </Card>

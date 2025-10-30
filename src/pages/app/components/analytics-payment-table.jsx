@@ -351,7 +351,7 @@ export const PAYMENT_SOURCE = [
 ];
 
 const COLUMN_DESCRIPTIONS = {
-  paymentDate: 'The date when the payment was processed (MM/DD/YYYY). It must fall within the selected month for the current table view.',
+  paymentDate: 'The date when the payment was processed (MMM DD, YYYY). It must fall within the selected month for the current table view.',
   customerStatus: 'Customer-level status derived from all their active subscriptions. Active: At least one subscription is Recurring or New Subscription. Churned: All subscriptions are Cancelled or Refunded. New Joined: First-time paying customer in the current month.',
   name: 'Full name of the customer for identification.',
   email: 'Customer’s email address used for communication and account reference.',
