@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import {
   Box,
@@ -433,6 +433,33 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
     return `${shortMonth[dt.getMonth()]} ${day}, ${year}`;
   };
 
+  const toNumber = (value) => {
+    const n = Number(String(value).replace(/[^0-9.-]/g, ''));
+    return Number.isFinite(n) ? n : 0;
+  };
+
+  const formatMoney = (value) => {
+    if (value === '-' || value === '' || value == null) return '-';
+    const n = toNumber(value);
+    return `$${n.toFixed(2)}`;
+  };
+
+  const newJoinedByEmail = useMemo(() => {
+    const map = new Map();
+    filteredData.forEach((row) => {
+      const { email } = row;
+      const prev = map.get(email) || { allNew: true, anyPrev: false };
+      const isNewSub = row.subscriptionStatus === 'New Subscription';
+      const hasPrev = toNumber(row.previousMonthMRR) > 0;
+      prev.allNew = prev.allNew && isNewSub;
+      prev.anyPrev = prev.anyPrev || hasPrev;
+      map.set(email, prev);
+    });
+    const result = {};
+    map.forEach((v, k) => { result[k] = v.allNew && !v.anyPrev; });
+    return result;
+  }, [filteredData]);
+
   return (
     <>
       <Card
@@ -466,8 +493,8 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
         <Table sx={{ minWidth: 1400 }}>
           <TableHead>
             <TableRow sx={{ backgroundColor: theme.palette.grey[100] }}>
-              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120 }}>
-                Payment Date
+              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 140 }}>
+                Payment On
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 200 }}>
                 Email / Name
@@ -511,7 +538,7 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                 }}
               >
                 {/* Payment Date */}
-                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2 }}>
+                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2, minWidth: 140 }}>
                   <Typography variant="body2" color="text.primary" sx={{ fontWeight: 500 }}>
                     {formatDate(row.paymentDate)}
                   </Typography>
@@ -558,7 +585,7 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                       fontWeight: 600
                     }}
                   >
-                    {row.previousMonthMRR}
+                    {formatMoney(row.previousMonthMRR)}
                   </Typography>
                 </TableCell>
 
@@ -571,7 +598,7 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                       fontWeight: 600
                     }}
                   >
-                    {row.currentMonthMRR}
+                    {formatMoney(row.currentMonthMRR)}
                   </Typography>
                 </TableCell>
 
@@ -592,15 +619,15 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                       fontWeight: 600
                     }}
                   >
-                    {row.advancePayment}
+                    {formatMoney(row.advancePayment)}
                   </Typography>
                 </TableCell>
 
                 {/* Customer Status (center aligned) */}
                 <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2, textAlign: 'center' }}>
                   <Chip
-                    label={row.customerStatus}
-                    color={getStatusColor(row.customerStatus)}
+                    label={newJoinedByEmail[row.email] ? 'New Joined' : row.customerStatus}
+                    color={getStatusColor(newJoinedByEmail[row.email] ? 'New Joined' : row.customerStatus)}
                     size="small"
                     variant="soft"
                     sx={{ height: '22px', fontSize: '0.75rem' }}
@@ -635,96 +662,91 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
       />
     </Card>
 
-    {/* Column Descriptions Section */}
+    {/* Info Tables */}
     <Card sx={{ mt: 4, p: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-        <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'text.primary' }}>
-          Column Descriptions
-        </Typography>
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 2 }}>
-          {Object.entries(COLUMN_DESCRIPTIONS).map(([key, description]) => (
-            <Box key={key} sx={{ mb: 1 }}>
-              <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>
-                {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}:
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {description}
-              </Typography>
-            </Box>
-          ))}
-        </Box>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'text.primary' }}>Customer Status</Typography>
+      <Table size="small">
+        <TableHead>
+          <TableRow sx={{ backgroundColor: theme.palette.grey[50] }}>
+            <TableCell>Customer Status</TableCell>
+            <TableCell>Definition</TableCell>
+            <TableCell>Condition / Logic</TableCell>
+            <TableCell>Example Scenario</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow><TableCell>🟢 Active</TableCell><TableCell>The customer currently has at least one active paid subscription.</TableCell><TableCell>At least one subscription is Recurring</TableCell><TableCell>Customer continues Tier 2 plan this month → Active.</TableCell></TableRow>
+          <TableRow><TableCell>🔵 New Joined</TableCell><TableCell>The customer made their first-ever payment during the selected month.</TableCell><TableCell>First-time paying customer; no prior billing history in previous months.</TableCell><TableCell>Customer subscribes for the first time in October → New Joined</TableCell></TableRow>
+          <TableRow><TableCell>🔴 Churned</TableCell><TableCell>The customer has no active paid subscriptions remaining.</TableCell><TableCell>All subscriptions are Cancelled or Refunded.</TableCell><TableCell>Customer cancels or refunds all plans → Churned.</TableCell></TableRow>
+        </TableBody>
+      </Table>
     </Card>
 
-    {/* Example Cases Section */}
     <Card sx={{ mt: 3, p: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-        <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'text.primary' }}>
-          Example Cases (Payment Status vs Customer Status)
-        </Typography>
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 2 }}>
-          <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
-            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>A) New Subscription → Customer Active</Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Example: Alice Cooper buys Pabbly Connect on 10/05.</Typography>
-            <Typography variant="body2" color="text.secondary">Payment Status: New Subscription</Typography>
-            <Typography variant="body2" color="text.secondary">Sept MRR: $0 → Oct MRR: $19</Typography>
-            <Typography variant="body2" color="success.main">✅ Customer Status: Active (has at least one active subscription)</Typography>
-          </Box>
-          <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
-            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>B) Recurring → Customer Active</Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Example: Carol King continues Tier 2 on 10/08.</Typography>
-            <Typography variant="body2" color="text.secondary">Payment Status: Recurring</Typography>
-            <Typography variant="body2" color="text.secondary">Sept MRR: $39 → Oct MRR: $39</Typography>
-            <Typography variant="body2" color="success.main">✅ Customer Status: Active</Typography>
-          </Box>
-          <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
-            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>C) Cancelled → Customer Active (other plan active)</Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Example: Neeraj cancels Tier 1 (Oct MRR: $0) but still has Tier 2 Recurring.</Typography>
-            <Typography variant="body2" color="text.secondary">Payment Status: Cancelled (for Tier 1)</Typography>
-            <Typography variant="body2" color="success.main">✅ Customer Status: Active (because another subscription remains active)</Typography>
-          </Box>
-          <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
-            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>D) Refunded → Customer Churned</Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Example: Ella Fitzgerald receives a refund on 10/18 for Starter Plan.</Typography>
-            <Typography variant="body2" color="text.secondary">Payment Status: Refunded</Typography>
-            <Typography variant="body2" color="text.secondary">Oct MRR: $0</Typography>
-            <Typography variant="body2" color="error.main">❌ Customer Status: Churned (all subscriptions are Cancelled/Refunded)</Typography>
-          </Box>
-          <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
-            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>E) Upgraded (MRR Increased)</Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Example: Nimesh adds Unlimited Plan (New Subscription $79).</Typography>
-            <Typography variant="body2" color="text.secondary">Sept total MRR: $58 → Oct total MRR: $137</Typography>
-            <Typography variant="body2" color="success.main">✅ Consolidated Status: Upgraded</Typography>
-            <Typography variant="body2" color="text.secondary">Each individual row still shows New Subscription.</Typography>
-          </Box>
-          <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
-            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>F) Downgraded (MRR Decreased)</Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Example: Neeraj moves from $58 total MRR → $39 total MRR.</Typography>
-            <Typography variant="body2" color="text.secondary">Sept MRR: $58 → Oct MRR: $39</Typography>
-            <Typography variant="body2" color="warning.main">✅ Consolidated Status: Downgraded</Typography>
-            <Typography variant="body2" color="text.secondary">Individual active subscriptions remain Recurring.</Typography>
-          </Box>
-          <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
-            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>G) Yearly Plan with Advance Payment</Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Example: David Bowie pays yearly for the Enterprise Plan ($99/mo).</Typography>
-            <Typography variant="body2" color="text.secondary">Oct MRR: $99</Typography>
-            <Typography variant="body2" color="text.secondary">Advance Payment: Remaining prepaid balance (months × $99)</Typography>
-            <Typography variant="body2" color="success.main">✅ Payment Status: Recurring</Typography>
-            <Typography variant="body2" color="success.main">✅ Customer Status: Active</Typography>
-          </Box>
-          <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, backgroundColor: theme.palette.background.paper }}>
-            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>H) Multiple Products/Plans</Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Example: Frank Sinatra has both Pabbly Connect (Unlimited – $79) and Pabbly Email Marketing (Pro – $49).</Typography>
-            <Typography variant="body2" color="success.main">✅ Consolidated View: Displays “Multiple Products” or “Multiple Plans”.</Typography>
-          </Box>
-        </Box>
-        <Box sx={{ mt: 2, p: 2, backgroundColor: theme.palette.primary.lighter, borderRadius: 1 }}>
-          <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: 'primary.darker' }}>
-            Status Rules Summary
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Payment Status is per subscription: → Recurring, New Subscription, Cancelled, Refunded<br/>
-            Customer Status is per customer: → Active if any subscription is Recurring or New Subscription; → Churned if all subscriptions are Cancelled or Refunded<br/>
-            New Joined: → First-time paying customer within the current month
-          </Typography>
-        </Box>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'text.primary' }}>Payment Status</Typography>
+      <Table size="small">
+        <TableHead>
+          <TableRow sx={{ backgroundColor: theme.palette.grey[50] }}>
+            <TableCell>Payment Status</TableCell>
+            <TableCell>Description</TableCell>
+            <TableCell>Effect on Customer Status</TableCell>
+            <TableCell>Example Scenario</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow><TableCell>🟢 Recurring</TableCell><TableCell>Payment processed for the ongoing billing cycle.</TableCell><TableCell>Customer remains Active.</TableCell><TableCell>Customer continues existing subscription.</TableCell></TableRow>
+          <TableRow><TableCell>🟢 New Subscription</TableCell><TableCell>First successful payment for a new subscription.</TableCell><TableCell>Customer becomes Active.</TableCell><TableCell>Customer subscribes to Tier 1 plan for the first time.</TableCell></TableRow>
+          <TableRow><TableCell>🔴 Cancelled</TableCell><TableCell>Subscription stopped; no current MRR.</TableCell><TableCell>Customer may still be Active if another plan is active or else the customer is churned.</TableCell><TableCell>One plan cancelled, another still Recurring.</TableCell></TableRow>
+          <TableRow><TableCell>🔴 Refunded</TableCell><TableCell>Payment reversed; current MRR becomes $0.</TableCell><TableCell>Customer may still be Active if another plan is active or else the customer is churned.</TableCell><TableCell>If we refund for the only subscription customer has → Churned.</TableCell></TableRow>
+          <TableRow><TableCell>🟠 Upgraded</TableCell><TableCell>Customer’s total MRR increased compared to previous month.</TableCell><TableCell>Customer remains Active.</TableCell><TableCell>Customer moves from $58 → $137 MRR.</TableCell></TableRow>
+          <TableRow><TableCell>🟡 Downgraded</TableCell><TableCell>Customer’s total MRR decreased compared to previous month.</TableCell><TableCell>Customer remains Active.</TableCell><TableCell>Customer moves from $58 → $39 MRR.</TableCell></TableRow>
+        </TableBody>
+      </Table>
+    </Card>
+
+    <Card sx={{ mt: 3, p: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'text.primary' }}>Column Name</Typography>
+      <Table size="small">
+        <TableHead>
+          <TableRow sx={{ backgroundColor: theme.palette.grey[50] }}>
+            <TableCell>Column Name</TableCell>
+            <TableCell>Description / Purpose</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow><TableCell>Payment Date</TableCell><TableCell>The date when the payment was processed (MMM DD, YYYY). Must fall within the selected month for the table view.</TableCell></TableRow>
+          <TableRow><TableCell>Name</TableCell><TableCell>Full name of the customer for identification.</TableCell></TableRow>
+          <TableRow><TableCell>Email</TableCell><TableCell>Customer’s email address used for communication and as a unique identifier for consolidation.</TableCell></TableRow>
+          <TableRow><TableCell>Product</TableCell><TableCell>The name of the Pabbly product or service the customer is subscribed to.</TableCell></TableRow>
+          <TableRow><TableCell>Plan</TableCell><TableCell>The specific subscription plan tier or package name under the product.</TableCell></TableRow>
+          <TableRow><TableCell>Previous Month MRR</TableCell><TableCell>Monthly Recurring Revenue (MRR) from the previous month (e.g., September when October is selected). Shown per subscription.</TableCell></TableRow>
+          <TableRow><TableCell>Current Month MRR</TableCell><TableCell>Monthly Recurring Revenue (MRR) for the selected month (e.g., October when October is selected). Shown per subscription.</TableCell></TableRow>
+          <TableRow><TableCell>Frequency</TableCell><TableCell>Billing frequency of the subscription — Monthly or Yearly.</TableCell></TableRow>
+          <TableRow><TableCell>Advance Payment</TableCell><TableCell>For yearly plans, shows the remaining prepaid amount (remaining months × per-month value). Displays “—” for monthly plans.</TableCell></TableRow>
+          <TableRow><TableCell>Subscription Status</TableCell><TableCell>Status at the subscription level: Recurring, New Subscription, Cancelled, or Refunded.</TableCell></TableRow>
+          <TableRow><TableCell>Customer Status</TableCell><TableCell>Status at the customer level, based on all active subscriptions: Active, Churned, or New Joined.</TableCell></TableRow>
+        </TableBody>
+      </Table>
+    </Card>
+
+    <Card sx={{ mt: 3, p: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'text.primary' }}>Status Logic Summary</Typography>
+      <Table size="small">
+        <TableHead>
+          <TableRow sx={{ backgroundColor: theme.palette.grey[50] }}>
+            <TableCell>Logic Rule</TableCell>
+            <TableCell>Condition</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow><TableCell>If any subscription is Recurring or New Subscription</TableCell><TableCell>Customer = Active</TableCell></TableRow>
+          <TableRow><TableCell>If all subscriptions are Cancelled or Refunded</TableCell><TableCell>Customer = Churned</TableCell></TableRow>
+          <TableRow><TableCell>If first-ever payment made this month</TableCell><TableCell>Customer = New Joined</TableCell></TableRow>
+          <TableRow><TableCell>If total MRR (Oct) &gt; previous month (Sept)</TableCell><TableCell>Status = Upgraded</TableCell></TableRow>
+          <TableRow><TableCell>If total MRR (Oct) &lt; previous month (Sept)</TableCell><TableCell>Status = Downgraded</TableCell></TableRow>
+          <TableRow><TableCell>If MRR unchanged</TableCell><TableCell>Status = Recurring</TableCell></TableRow>
+        </TableBody>
+      </Table>
     </Card>
     </>
   );
