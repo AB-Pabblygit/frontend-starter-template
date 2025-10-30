@@ -242,10 +242,10 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, textAlign: 'center' }}>{rows[0]?.prevLabel || 'Selected Month'} MRR</TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, textAlign: 'center' }}>Advance Payment</TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'center' }}>
-                Payment Status
+                Customer Status
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'right' }}>
-                Customer Status
+                Payment Status
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}` }} />
             </TableRow>
@@ -275,10 +275,10 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
                     {r.advancePayment || '-'}
                   </TableCell>
                   <TableCell sx={{ textAlign: 'center' }}>
-                    <Chip size="small" variant="soft" color={statusColor(r.consolidatedStatus)} label={r.consolidatedStatus} sx={{ height: '22px', fontSize: '0.75rem' }} />
+                    <Chip size="small" variant="soft" color={customerStatusColor(r.latestStatus)} label={r.latestStatus} sx={{ height: '22px', fontSize: '0.75rem' }} />
                   </TableCell>
                   <TableCell sx={{ textAlign: 'right' }}>
-                    <Chip size="small" variant="soft" color={customerStatusColor(r.latestStatus)} label={r.latestStatus} sx={{ height: '22px', fontSize: '0.75rem' }} />
+                    <Chip size="small" variant="soft" color={statusColor(r.consolidatedStatus)} label={r.consolidatedStatus} sx={{ height: '22px', fontSize: '0.75rem' }} />
                   </TableCell>
                   <TableCell width={48} align="right">
                     <IconButton size="small" onClick={() => setExpandedEmail(expandedEmail === r.email ? null : r.email)}>
@@ -304,10 +304,10 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
                               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}` }}>Billing Cycle</TableCell>
                               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, textAlign: 'center' }}>Advance Payment</TableCell>
                               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'center' }}>
-                                Payment Status
+                                Customer Status
                               </TableCell>
                               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'right' }}>
-                                Customer Status
+                                Payment Status
                               </TableCell>
                             </TableRow>
                           </TableHead>
@@ -338,10 +338,10 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
                                 </TableCell>
                                 <TableCell align="center" sx={{ fontWeight: 600, color: 'primary.main' }}>{it.advancePayment}</TableCell>
                                 <TableCell sx={{ textAlign: 'center' }}>
-                                  <Chip size="small" variant="soft" color={getSubscriptionColor(it.subscriptionStatus)} label={it.subscriptionStatus} sx={{ height: '22px', fontSize: '0.75rem' }} />
+                                  <Chip size="small" variant="soft" color={customerStatusColor(it.customerStatus)} label={it.customerStatus} sx={{ height: '22px', fontSize: '0.75rem' }} />
                                 </TableCell>
                                 <TableCell sx={{ textAlign: 'right' }}>
-                                  <Chip size="small" variant="soft" color={customerStatusColor(it.customerStatus)} label={it.customerStatus} sx={{ height: '22px', fontSize: '0.75rem' }} />
+                                  <Chip size="small" variant="soft" color={getSubscriptionColor(it.subscriptionStatus)} label={it.subscriptionStatus} sx={{ height: '22px', fontSize: '0.75rem' }} />
                                 </TableCell>
                               </TableRow>
                             ))}

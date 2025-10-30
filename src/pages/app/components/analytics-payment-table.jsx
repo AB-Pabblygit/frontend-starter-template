@@ -488,11 +488,11 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'center' }}>
                 Advance Payment
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'right' }}>
-                Payment Status
+              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'center' }}>
+                Customer Status
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'right' }}>
-                Customer Status
+                Payment Status
               </TableCell>
             </TableRow>
           </TableHead>
@@ -583,7 +583,8 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                   </Typography>
                 </TableCell>
 
-                {/* Advance Payment (center aligned) */}
+                {/* Advance Payment (center aligned) */
+                }
                 <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2, textAlign: 'center' }}>
                   <Typography 
                     variant="body2" 
@@ -596,22 +597,22 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                   </Typography>
                 </TableCell>
 
-                {/* Payment Status (center aligned) */}
+                {/* Customer Status (center aligned) */}
                 <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2, textAlign: 'center' }}>
                   <Chip
-                    label={row.subscriptionStatus}
-                    color={getSubscriptionColor(row.subscriptionStatus)}
+                    label={row.customerStatus}
+                    color={getStatusColor(row.customerStatus)}
                     size="small"
                     variant="soft"
                     sx={{ height: '22px', fontSize: '0.75rem' }}
                   />
                 </TableCell>
 
-                {/* Customer Status (right aligned) */}
+                {/* Payment Status (right aligned) */}
                 <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2, textAlign: 'right' }}>
                   <Chip
-                    label={row.customerStatus}
-                    color={getStatusColor(row.customerStatus)}
+                    label={row.subscriptionStatus}
+                    color={getSubscriptionColor(row.subscriptionStatus)}
                     size="small"
                     variant="soft"
                     sx={{ height: '22px', fontSize: '0.75rem' }}
