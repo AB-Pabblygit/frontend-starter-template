@@ -17,6 +17,136 @@ import {
 import { Iconify } from 'src/components/iconify';
 import { PAYMENT_SOURCE } from './analytics-payment-table';
 
+// Metric tooltips for cards (A–H) and table (A–U)
+export const metricTooltips = {
+  A: {
+    title: 'Previous Month Overall MRR',
+    description:
+      'Total Monthly Recurring Revenue (MRR) collected in the previous month, derived from all active subscriptions in that period.',
+    formula: 'Sum of all active MRR in previous month (Consolidated Data).',
+  },
+  B: {
+    title: 'Active Customers MRR',
+    description:
+      'MRR from customers who continued from the previous month and still have active subscriptions this month.',
+    formula: 'Sum of MRR for customers active in both months.',
+  },
+  C: {
+    title: 'Cancelled Customers MRR',
+    description:
+      'Total MRR lost due to customers who cancelled or refunded all their subscriptions this month.',
+    formula: 'Sum of MRR from customers who churned (Cancelled + Refunded).',
+  },
+  D: {
+    title: 'New Customer MRR',
+    description:
+      'Monthly Recurring Revenue generated from first-time customers acquired this month.',
+    formula: 'Sum of MRR from new customers joining this month.',
+  },
+  E: {
+    title: 'Overall MRR',
+    description:
+      'Combined Monthly Recurring Revenue for the current month, including both new and continuing customers.',
+    formula: 'Overall MRR = (B) + (D)',
+  },
+  F: {
+    title: 'Total Revenue',
+    description:
+      'Total payment amount received during the selected month — includes MRR, add-ons, and one-time payments.',
+    formula: 'Sum of all payments in current month (regardless of plan type).',
+  },
+  G: {
+    title: 'Revenue Churn %',
+    description:
+      'Percentage of recurring revenue lost during the period due to cancellations or downgrades.',
+    formula: '((C) / (A)) × 100',
+  },
+  H: {
+    title: 'Overall Lifetime Value (LTV)',
+    description:
+      'Estimated total revenue expected from all customers over their lifetime, based on churn rate.',
+    formula: '(E) / (G) × 100',
+  },
+  I: {
+    title: 'LTV per Customer',
+    description:
+      'Average revenue expected per customer throughout their lifetime.',
+    formula: '(H) / (Total Customers)',
+  },
+  J: {
+    title: 'Overall Customer Acquisition Cost (CAC)',
+    description:
+      'Total marketing and sales spend used to acquire new customers in this period.',
+    formula: 'Sum of all acquisition-related expenses.',
+  },
+  K: {
+    title: 'CAC per Customer',
+    description:
+      'Average acquisition cost per customer — measures efficiency of marketing spend.',
+    formula: '(J) / (Total Customers)',
+  },
+  L: {
+    title: 'Total Customers Last Month',
+    description:
+      'Total unique paying customers who had at least one active subscription in the previous month.',
+    formula: 'Count of unique customers (previous month).',
+  },
+  M: {
+    title: 'Active Customers',
+    description:
+      'Total customers who currently have one or more active subscriptions (Recurring or New Subscription).',
+    formula: 'Count of customers with active subscriptions this month.',
+  },
+  N: {
+    title: 'Customers Left',
+    description:
+      'Number of customers lost compared to the previous month — those who no longer have active subscriptions.',
+    formula: '(L) - (M)',
+  },
+  O: {
+    title: 'New Joined Customers',
+    description:
+      'Number of first-time customers who joined during the selected month.',
+    formula: 'Count of first-time paying customers this month.',
+  },
+  P: {
+    title: 'Total Customers (Current)',
+    description:
+      'Total number of customers in the current month, including active and new customers.',
+    formula: '(M) + (O)',
+  },
+  Q: {
+    title: 'User Churn %',
+    description:
+      'Percentage of customers lost compared to the previous month.',
+    formula: '((N) / (L)) × 100',
+  },
+  R: {
+    title: 'Average Revenue per Customer',
+    description:
+      'Average Monthly Recurring Revenue per active customer in the current month.',
+    formula: '(E) / (P)',
+  },
+  S: {
+    title: 'Customer Lifetime (Months)',
+    description:
+      'Average number of months a customer is expected to stay subscribed before churning.',
+    formula: '1 / (User Churn % / 100)',
+  },
+  T: {
+    title: 'Refund Count',
+    description:
+      'Total number of refund transactions processed during the current month.',
+    formula: 'Count of refunded payments this month.',
+  },
+  U: {
+    title: 'Amount Refunded',
+    description:
+      'Total amount of money refunded to customers during the selected period. Does not count as MRR churn.',
+    formula: 'Sum of all refunded transaction amounts.',
+  },
+};
+
 function toNumber(value) {
   if (value === '-' || value === '' || value == null) return 0;
   const n = Number(String(value).replace(/[^0-9.-]/g, ''));
@@ -152,8 +282,8 @@ export function AnalyticsSummary({ selectedMonth, selectedYear, selectedProduct 
       { key: 'C', title: 'New Customers', value: newCustomers, tooltip: 'Customers whose first payment occurred in this month.', icon: 'solar:user-plus-bold', color: 'info.main' },
       { key: 'D', title: 'Churned Customers', value: churnedCustomers, tooltip: 'Customers who had active plans before but now have none.', icon: 'solar:user-minus-bold', color: 'error.main' },
       { key: 'E', title: 'Total MRR', value: formatMoney(totalMRR), tooltip: 'Sum of all active subscription MRR for the current month.', icon: 'solar:dollar-minimalistic-bold', color: 'primary.main' },
-      { key: 'F', title: 'Revenue Churn %', value: `${revenueChurnPct.toFixed(1)}%`, tooltip: 'Churned MRR / Previous Month MRR × 100.', icon: 'solar:chart-down-bold', color: 'error.main' },
-      { key: 'G', title: 'Net MRR Growth', value: formatMoney(netMrrGrowth), tooltip: 'New + Expansion – Contraction – Churned MRR. TODO: expansion/contraction.', icon: netMrrGrowth >= 0 ? 'solar:chart-up-bold' : 'solar:chart-down-bold', color: netMrrGrowth >= 0 ? 'success.main' : 'error.main' },
+      { key: 'F', title: 'Revenue Churn %', value: `${revenueChurnPct.toFixed(1)}%`, tooltip: 'Churned MRR / Previous Month MRR × 100.', icon: 'lucide:trending-down', color: 'error.main' },
+      { key: 'G', title: 'Net MRR Growth', value: formatMoney(netMrrGrowth), tooltip: 'New + Expansion – Contraction – Churned MRR. TODO: expansion/contraction.', icon: netMrrGrowth >= 0 ? 'lucide:trending-up' : 'lucide:trending-down', color: netMrrGrowth >= 0 ? 'success.main' : 'error.main' },
       { key: 'H', title: 'Refunds Issued', value: formatMoney(refundsIssued), tooltip: 'Total cash amount refunded this month.', icon: 'solar:card-bold', color: 'warning.main' },
     ];
     return items;
@@ -270,10 +400,11 @@ export function AnalyticsSummary({ selectedMonth, selectedYear, selectedProduct 
             key={m.key}
             arrow
             placement="top"
+            disableInteractive
             title={
               <Box>
-                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{m.title}</Typography>
-                <Typography variant="body2">{m.tooltip}</Typography>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{metricTooltips[m.key]?.title || m.title}</Typography>
+                <Typography variant="body2">{metricTooltips[m.key]?.description || m.tooltip}</Typography>
               </Box>
             }
           >
@@ -284,9 +415,9 @@ export function AnalyticsSummary({ selectedMonth, selectedYear, selectedProduct 
               <Iconify 
                 icon={
                   m.key === 'F'
-                    ? 'solar:chart-down-bold' // Revenue Churn %
+                    ? 'lucide:trending-down' // Revenue Churn %
                     : m.key === 'G'
-                      ? ((typeof m.value === 'string' && m.value.includes('-')) ? 'solar:chart-down-bold' : 'solar:chart-up-bold') // Net MRR Growth
+                      ? ((typeof m.value === 'string' && m.value.includes('-')) ? 'lucide:trending-down' : 'lucide:trending-up') // Net MRR Growth
                       : (m.icon || 'solar:chart-square-bold')
                 }
                 sx={{ 
@@ -313,13 +444,13 @@ export function AnalyticsSummary({ selectedMonth, selectedYear, selectedProduct 
       </Box>
 
       {/* Metrics Table A–U */}
-      <Card sx={{ p: 0, borderRadius: 3 }}>
-        <Box sx={{ px: 3, pt: 3, pb: 2 }}>
+      <Card sx={{ p: 0, borderRadius: '16px' }}>
+        <Box sx={{ px: 3, pt: 2, pb: 1.5 }}>
           <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>Revenue Metrics</Typography>
         </Box>
         <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 0, overflowX: 'auto' }}>
           <Table size="small" sx={{ minWidth: 720, '& .MuiTableCell-body': { py: 1.25, px: 2 } }}>
-            <TableHead>
+            <TableHead sx={{ '& th': { py: 2 } }}>
               <TableRow>
                 <TableCell sx={{ fontWeight: 600 }}>Index</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Metric</TableCell>
@@ -327,12 +458,30 @@ export function AnalyticsSummary({ selectedMonth, selectedYear, selectedProduct 
                 <TableCell sx={{ fontWeight: 600 }}>Value</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
+            <TableBody sx={{ '& td': { py: 1.25 } }}>
               {tableMetrics.map(([idx, metric, formula, value]) => (
                 <TableRow key={idx} hover>
                   <TableCell sx={{ width: 72 }}>{idx}</TableCell>
-                  <TableCell>{metric}</TableCell>
-                  <TableCell sx={{ color: 'text.secondary' }}>{formula}</TableCell>
+                  <TableCell>
+                    <Tooltip
+                      arrow
+                      placement="top"
+                      disableInteractive
+                      title={
+                        <Box>
+                          <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{metricTooltips[idx]?.title || metric}</Typography>
+                          <Typography variant="body2">{metricTooltips[idx]?.description}</Typography>   
+                        </Box>
+                      }
+                    >
+                      <span>{metric}</span>
+                    </Tooltip>
+                  </TableCell>
+                  <TableCell sx={{ color: 'text.secondary' }}>
+                    <Tooltip arrow placement="top" disableInteractive title={metricTooltips[idx]?.description || ''}>
+                      <span>{formula}</span>
+                    </Tooltip>
+                  </TableCell>
                   <TableCell>{value}</TableCell>
                 </TableRow>
               ))}

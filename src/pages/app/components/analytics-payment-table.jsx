@@ -465,7 +465,7 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
       <Card
         sx={{
           p: 0,
-          borderRadius: 4,
+          borderRadius: '16px',
           boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
           backgroundColor: theme.palette.background.paper,
         }}
@@ -522,7 +522,7 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
               </TableCell>
             </TableRow>
           </TableHead>
-          <TableBody sx={{ '& td': { py: 1.5 }, '& .MuiTableRow-root': { height: 'auto' } }}>
+          <TableBody sx={{ '& td': { py: 1.25 }, '& .MuiTableRow-root': { height: 'auto' } }}>
             {paginatedData.map((row) => (
               <TableRow 
                 key={row.id} 
@@ -538,14 +538,14 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                 }}
               >
                 {/* Payment Date */}
-                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2, minWidth: 140 }}>
+                <TableCell sx={{ borderBottom: `1px dotted ${theme.palette.divider}`, py: 1.25, px: 2, minWidth: 140 }}>
                   <Typography variant="body2" color="text.primary" sx={{ fontWeight: 500 }}>
                     {formatDate(row.paymentDate)}
                   </Typography>
                 </TableCell>
 
                 {/* Email / Name */}
-                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2 }}>
+                <TableCell sx={{ borderBottom: `1px dotted ${theme.palette.divider}`, py: 1.25, px: 2 }}>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                     <Typography 
                       variant="body2" 
@@ -565,7 +565,7 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                 </TableCell>
 
                 {/* Product / Plan */}
-                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2 }}>
+                <TableCell sx={{ borderBottom: `1px dotted ${theme.palette.divider}`, py: 1.25, px: 2 }}>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                     <Typography variant="body2" color="text.primary" sx={{ fontWeight: 500 }}>
                       {row.product}
@@ -577,7 +577,7 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                 </TableCell>
 
                 {/* Previous Month MRR (black text, center aligned) */}
-                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2, textAlign: 'center' }}>
+                <TableCell sx={{ borderBottom: `1px dotted ${theme.palette.divider}`, py: 1.25, px: 2, textAlign: 'center' }}>
                   <Typography 
                     variant="body2" 
                     color="text.primary" 
@@ -590,7 +590,7 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                 </TableCell>
 
                 {/* Selected Month MRR (black text, center aligned) */}
-                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2, textAlign: 'center' }}>
+                <TableCell sx={{ borderBottom: `1px dotted ${theme.palette.divider}`, py: 1.25, px: 2, textAlign: 'center' }}>
                   <Typography 
                     variant="body2" 
                     color="text.primary" 
@@ -603,7 +603,7 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                 </TableCell>
 
                 {/* Billing Cycle */}
-                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2 }}>
+                <TableCell sx={{ borderBottom: `1px dotted ${theme.palette.divider}`, py: 1.25, px: 2 }}>
                   <Typography variant="body2" color="text.primary">
                     {row.frequency}
                   </Typography>
@@ -611,7 +611,7 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
 
                 {/* Advance Payment (center aligned) */
                 }
-                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2, textAlign: 'center' }}>
+                <TableCell sx={{ borderBottom: `1px dotted ${theme.palette.divider}`, py: 1.25, px: 2, textAlign: 'center' }}>
                   <Typography 
                     variant="body2" 
                     color="primary.main" 
@@ -624,7 +624,7 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                 </TableCell>
 
                 {/* Customer Status (center aligned) */}
-                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2, textAlign: 'center' }}>
+                <TableCell sx={{ borderBottom: `1px dotted ${theme.palette.divider}`, py: 1.25, px: 2, textAlign: 'center' }}>
                   <Chip
                     label={newJoinedByEmail[row.email] ? 'New Joined' : row.customerStatus}
                     color={getStatusColor(newJoinedByEmail[row.email] ? 'New Joined' : row.customerStatus)}
@@ -635,7 +635,7 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                 </TableCell>
 
                 {/* Payment Status (right aligned) */}
-                <TableCell sx={{ borderBottom: `1px solid ${theme.palette.divider}`, py: 1.75, px: 2, textAlign: 'right' }}>
+                <TableCell sx={{ borderBottom: `1px dotted ${theme.palette.divider}`, py: 1.25, px: 2, textAlign: 'right' }}>
                   <Chip
                     label={row.subscriptionStatus}
                     color={getSubscriptionColor(row.subscriptionStatus)}
@@ -663,7 +663,7 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
     </Card>
 
     {/* Info Tables */}
-    <Card sx={{ mt: 4, p: 0, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+    <Card sx={{ mt: 4, p: 0, borderRadius: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
       <Box sx={{ px: 3, pt: 3, pb: 2 }}>
         <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>Customer Status</Typography>
       </Box>
@@ -684,7 +684,7 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
       </Table>
     </Card>
 
-    <Card sx={{ mt: 3, p: 0, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+    <Card sx={{ mt: 3, p: 0, borderRadius: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
       <Box sx={{ px: 3, pt: 3, pb: 2 }}>
         <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>Payment Status</Typography>
       </Box>
@@ -708,7 +708,7 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
       </Table>
     </Card>
 
-    <Card sx={{ mt: 3, p: 0, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+    <Card sx={{ mt: 3, p: 0, borderRadius: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
       <Box sx={{ px: 3, pt: 3, pb: 2 }}>
         <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>Column Name</Typography>
       </Box>
@@ -735,7 +735,7 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
       </Table>
     </Card>
 
-    <Card sx={{ mt: 3, p: 0, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+    <Card sx={{ mt: 3, p: 0, borderRadius: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
       <Box sx={{ px: 3, pt: 3, pb: 2 }}>
         <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>Status Logic Summary</Typography>
       </Box>

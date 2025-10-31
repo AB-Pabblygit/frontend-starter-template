@@ -237,7 +237,7 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
 
   return (
     <>
-        <Card sx={{ p: 0, borderRadius: 4, boxShadow: '0 4px 15px rgba(0,0,0,0.08)', backgroundColor: theme.palette.background.paper }}>
+        <Card sx={{ p: 0, borderRadius: '16px', boxShadow: '0 4px 15px rgba(0,0,0,0.08)', backgroundColor: theme.palette.background.paper }}>
       <Box sx={{ px: 3, pt: 3, pb: 2 }}>
         <Typography variant="h5" sx={{ fontSize: '20px', fontWeight: 600, color: 'text.primary', mb: 1 }}>
           Consolidated Data
@@ -297,10 +297,10 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
                   <TableCell sx={{ textAlign: 'center', py: 1, px: 2 }}>
                     <Typography variant="body2" color="text.primary" sx={{ fontWeight: 600 }}>{formatMoney(r.prevMRR)}</Typography>
                   </TableCell>
-                  <TableCell sx={{ textAlign: 'center', py: 1.75, px: 2 }}>
+                  <TableCell sx={{ textAlign: 'center', py: 1, px: 2 }}>
                     <Typography variant="body2" color="primary.main" sx={{ fontWeight: 600 }}>{r.advancePayment || '-'}</Typography>
                   </TableCell>
-                  <TableCell sx={{ textAlign: 'center', py: 1.75, px: 2 }}>
+                  <TableCell sx={{ textAlign: 'center', py: 1, px: 2 }}>
                     <Chip size="small" variant="soft" color={customerStatusColor(r.latestStatus)} label={r.latestStatus} sx={{ height: '22px', fontSize: '0.75rem' }} />
                   </TableCell>
                   <TableCell sx={{ textAlign: 'right', py: 1, px: 2 }}>
@@ -407,7 +407,7 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
     </Card>
 
     {/* Info Tables (Consolidated View) */}
-    <Card sx={{ mt: 4, p: 0, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+    <Card sx={{ mt: 4, p: 0, borderRadius: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
       <Box sx={{ px: 3, pt: 3, pb: 2 }}>
         <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>Customer Status</Typography>
       </Box>
@@ -428,7 +428,7 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
       </Table>
     </Card>
 
-    <Card sx={{ mt: 3, p: 0, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+    <Card sx={{ mt: 3, p: 0, borderRadius: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
       <Box sx={{ px: 3, pt: 3, pb: 2 }}>
         <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>Subscription Status (Consolidated — Per Customer)</Typography>
       </Box>
@@ -451,7 +451,7 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
       </Table>
     </Card>
 
-    <Card sx={{ mt: 3, p: 0, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+    <Card sx={{ mt: 3, p: 0, borderRadius: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
       <Box sx={{ px: 3, pt: 3, pb: 2 }}>
         <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>General Column Descriptions</Typography>
       </Box>
@@ -476,7 +476,7 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
       </Table>
     </Card>
 
-    <Card sx={{ mt: 3, p: 0, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+    <Card sx={{ mt: 3, p: 0, borderRadius: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
       <Box sx={{ px: 3, pt: 3, pb: 2 }}>
         <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>Status Logic Summary</Typography>
       </Box>
