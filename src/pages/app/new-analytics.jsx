@@ -10,6 +10,7 @@ import PageHeader from 'src/components/page-header/page-header';
 import ErrorBoundary from 'src/components/error-boundary/error-boundary';
 
 import { AnalyticsConsolidatedTable } from './components/analytics-consolidated-table';
+import { AnalyticsSummary } from './components/analytics-summary';
 import { PAYMENT_SOURCE, AnalyticsPaymentTable } from './components/analytics-payment-table';
 
 const metadata = { title: `Analytics Dashboard | ${CONFIG.site.name}` };
@@ -55,7 +56,7 @@ export default function NewAnalyticsPage() {
           <Box sx={{ mb: 4 }}>
             <PageHeader 
               title="Analytics Dashboard" 
-              Subheading="MRR & Churn Analytics" 
+              
               link_added="" 
             />
           </Box>
@@ -98,6 +99,14 @@ export default function NewAnalyticsPage() {
               </Select>
             </FormControl>
           </Box>
+
+          {/* Summary Section */}
+          <AnalyticsSummary 
+            selectedMonth={selectedMonth}
+            selectedYear={selectedYear}
+            selectedProduct={selectedProduct}
+            selectedPlan={selectedPlan}
+          />
 
           {/* Two-tab layout with filters affecting content */}
           <Box sx={{ mb: 4 }}>

@@ -259,7 +259,7 @@ export function AnalyticsCharts({ monthlyTrends, productBreakdown, planBreakdown
       <Grid container spacing={3}>
         {/* MRR Growth Chart */}
         <Grid item xs={12} lg={8}>
-          <Card sx={{ p: 3, height: 400 }}>
+          <Card sx={{ p: 3, height: 400, borderRadius: '16px' }}>
             <Box sx={{ height: 300 }}>
               <Line data={mrrGrowthData} options={mrrGrowthOptions} />
             </Box>
@@ -268,7 +268,7 @@ export function AnalyticsCharts({ monthlyTrends, productBreakdown, planBreakdown
 
         {/* Customer Count Chart */}
         <Grid item xs={12} lg={4}>
-          <Card sx={{ p: 3, height: 400 }}>
+          <Card sx={{ p: 3, height: 400, borderRadius: '16px' }}>
             <Box sx={{ height: 300 }}>
               <Bar data={customerCountData} options={customerCountOptions} />
             </Box>
@@ -277,7 +277,7 @@ export function AnalyticsCharts({ monthlyTrends, productBreakdown, planBreakdown
 
         {/* Product Distribution */}
         <Grid item xs={12} md={6}>
-          <Card sx={{ p: 3, height: 400 }}>
+          <Card sx={{ p: 3, height: 400, borderRadius: '16px' }}>
             <Box sx={{ height: 300 }}>
               <Doughnut data={productDistributionData} options={productDistributionOptions} />
             </Box>
@@ -286,7 +286,7 @@ export function AnalyticsCharts({ monthlyTrends, productBreakdown, planBreakdown
 
         {/* Plan Distribution */}
         <Grid item xs={12} md={6}>
-          <Card sx={{ p: 3, height: 400 }}>
+          <Card sx={{ p: 3, height: 400, borderRadius: '16px' }}>
             <Box sx={{ height: 300 }}>
               <Doughnut data={planDistributionData} options={planDistributionOptions} />
             </Box>
