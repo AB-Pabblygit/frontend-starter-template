@@ -159,3 +159,55 @@ Collapsible subscription details include per-subscription columns matching Expan
 - Icons: Iconify; special cases for Revenue Churn %, Net MRR Growth, Same‑Month Churn.
 - Styling: Consistent card radii, dotted table separators, and padding.
 - TODOs: Expansion/Contraction deltas for Net MRR Growth; CAC data source.
+
+---
+
+## Example Scenarios (Edge Cases)
+
+- Same‑Month Refund (New then Refunded)
+  - Event: Customer makes first purchase in selected month, then gets a refund in the same month.
+  - Result:
+    - Customer Status: New Joined (for the selected month)
+    - Same‑Month Churn: +1 (they end the month inactive)
+    - Active Customers (M): Not counted if no Recurring subscription
+    - Totals: Counted in Total Customers (P). Refund impacts cash totals and churned MRR.
+
+- Multi‑Plan Customer (One Cancelled, One Active)
+  - Event: Customer cancels one plan but keeps another active.
+  - Result:
+    - Customer Status: Active (has at least one active subscription)
+    - Consolidated Status: Based on total MRR movement (Upgraded/Downgraded/Recurring)
+    - Not counted as Churned.
+
+- Partial Refund on First Purchase
+  - Event: First‑time purchase gets partial refund.
+  - Result:
+    - Customer Status: New Joined
+    - Same‑Month Churn: 0 (still active if any active subscription remains)
+    - Refunds Issued (H) and Amount Refunded (U) reflect cash impact.
+
+- Upgrade, Then Downgrade in Same Month
+  - Event: Customer increases MRR, then reduces within the same month.
+  - Result:
+    - Consolidated Status: Reflects net MRR change for the month (Upgraded/Downgraded)
+    - Customer Status: Active if any active subscription exists.
+
+- Chargeback in Same Month
+  - Event: First‑time purchase is charged back.
+  - Result:
+    - Customer Status: New Joined
+    - Same‑Month Churn: +1 if ends month inactive
+    - Refund/Chargeback counts and cash totals reflect the reversal.
+
+- Annual Prepay Refunded Within Month
+  - Event: Yearly plan paid, later refunded the same month.
+  - Result:
+    - Customer Status: New Joined
+    - Same‑Month Churn: +1 if no active subs remain
+    - Advance Payment: Resets to “—”; cash totals adjusted via refunds.
+
+- Mixed Billing Cycles
+  - Event: Customer holds Monthly and Yearly subscriptions.
+  - Result:
+    - Frequency (Consolidated): Mixed
+    - Customer Status: Active if any active sub exists; New Joined if first-ever purchase this month.
