@@ -494,31 +494,58 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
           <TableHead sx={{ '& th': { py: 2 }, '& .MuiTableRow-root': { height: 'auto' } }}>
             <TableRow sx={{ backgroundColor: theme.palette.grey[100] }}>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 140 }}>
-                Payment On (A)
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Payment On</Typography>
+                  <Typography variant="caption" color="text.secondary">(A)</Typography>
+                </Box>
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 200 }}>
-                Email / Name (B)
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Email / Name</Typography>
+                  <Typography variant="caption" color="text.secondary">(B)</Typography>
+                </Box>
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 150 }}>
-                Product / Plan (C)
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Product / Plan</Typography>
+                  <Typography variant="caption" color="text.secondary">(C)</Typography>
+                </Box>
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'center' }}>
-                <Typography variant="subtitle2" sx={{ m: 0, p: 0, letterSpacing: 0 }}>{getMonthLabels(selectedMonth)[1]} MRR (D)</Typography>
+                <Box>
+                  <Typography variant="subtitle2" sx={{ m: 0, p: 0, letterSpacing: 0 }}>{getMonthLabels(selectedMonth)[1]} MRR</Typography>
+                  <Typography variant="caption" color="text.secondary">(D)</Typography>
+                </Box>
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'center' }}>
-                <Typography variant="subtitle2" sx={{ m: 0, p: 0, letterSpacing: 0 }}>{getMonthLabels(selectedMonth)[0]} MRR (E)</Typography>
+                <Box>
+                  <Typography variant="subtitle2" sx={{ m: 0, p: 0, letterSpacing: 0 }}>{getMonthLabels(selectedMonth)[0]} MRR</Typography>
+                  <Typography variant="caption" color="text.secondary">(E)</Typography>
+                </Box>
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 100 }}>
-                Billing Cycle (F)
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Billing Cycle</Typography>
+                  <Typography variant="caption" color="text.secondary">(F)</Typography>
+                </Box>
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'center' }}>
-                Advance Payment (G)
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Advance Payment</Typography>
+                  <Typography variant="caption" color="text.secondary">(G)</Typography>
+                </Box>
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'center' }}>
-                Customer Status (H)
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Customer Status</Typography>
+                  <Typography variant="caption" color="text.secondary">(H)</Typography>
+                </Box>
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'right' }}>
-                Payment Status (I)
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Payment Status</Typography>
+                  <Typography variant="caption" color="text.secondary">(I)</Typography>
+                </Box>
               </TableCell>
             </TableRow>
           </TableHead>

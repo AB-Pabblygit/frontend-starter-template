@@ -252,22 +252,52 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
           <TableHead sx={{ '& th': { py: 2 }, '& .MuiTableRow-root': { height: 'auto' } }}>
             <TableRow sx={{ backgroundColor: theme.palette.grey[100] }}>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 140 }}>
-                Payment On (A)
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Payment On</Typography>
+                  <Typography variant="caption" color="text.secondary">(A)</Typography>
+                </Box>
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 200 }}>Email / Name (B)</TableCell>
-              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 150 }}>Product / Plan (C)</TableCell>
+              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 200 }}>
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Email / Name</Typography>
+                  <Typography variant="caption" color="text.secondary">(B)</Typography>
+                </Box>
+              </TableCell>
+              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 150 }}>
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Product / Plan</Typography>
+                  <Typography variant="caption" color="text.secondary">(C)</Typography>
+                </Box>
+              </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, textAlign: 'center', minWidth: 120 }}>
-                <Typography variant="subtitle2" sx={{ m: 0, p: 0, letterSpacing: 0 }}>{rows[0]?.prevPrevLabel || 'Previous Month'} MRR (D)</Typography>
+                <Box>
+                  <Typography variant="subtitle2" sx={{ m: 0, p: 0, letterSpacing: 0 }}>{rows[0]?.prevPrevLabel || 'Previous Month'} MRR</Typography>
+                  <Typography variant="caption" color="text.secondary">(D)</Typography>
+                </Box>
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, textAlign: 'center', minWidth: 120 }}>
-                <Typography variant="subtitle2" sx={{ m: 0, p: 0, letterSpacing: 0 }}>{rows[0]?.prevLabel || 'Selected Month'} MRR (E)</Typography>
+                <Box>
+                  <Typography variant="subtitle2" sx={{ m: 0, p: 0, letterSpacing: 0 }}>{rows[0]?.prevLabel || 'Selected Month'} MRR</Typography>
+                  <Typography variant="caption" color="text.secondary">(E)</Typography>
+                </Box>
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, textAlign: 'center', minWidth: 120 }}>Advance Payment (G)</TableCell>
+              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, textAlign: 'center', minWidth: 120 }}>
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Advance Payment</Typography>
+                  <Typography variant="caption" color="text.secondary">(G)</Typography>
+                </Box>
+              </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'center' }}>
-                Customer Status (H)
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Customer Status</Typography>
+                  <Typography variant="caption" color="text.secondary">(H)</Typography>
+                </Box>
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'right' }}>
-                Payment Status (I)
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Payment Status</Typography>
+                  <Typography variant="caption" color="text.secondary">(I)</Typography>
+                </Box>
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}` }} />
             </TableRow>
@@ -317,28 +347,63 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
                   <TableCell colSpan={9} sx={{ py: 0, border: 0, height: 0 }}>
                     <Collapse in timeout="auto" unmountOnExit>
                       <Box sx={{ px: 2, py: 2 }}>
-                        <Typography variant="subtitle2" sx={{ mb: 1 }}>Subscriptions</Typography>
+                        <Typography variant="subtitle2" sx={{ mb: 1 }}>Customer Subscription Information</Typography>
                         <Table size="small" sx={{ '& .MuiTableCell-body': { py: 1.25, px: 2 }, '& .MuiTableRow-root': { height: 'auto' } }}>
                           <TableHead sx={{ '& .MuiTableRow-root': { height: 'auto' } }}>
                             <TableRow sx={{ backgroundColor: theme.palette.grey[50] }}>
                               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 140 }}>
-                                Payment On (A)
+                                <Box>
+                                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Payment On</Typography>
+                                  <Typography variant="caption" color="text.secondary">(A)</Typography>
+                                </Box>
                               </TableCell>
-                              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}` }}>Email / Name (B)</TableCell>
-                              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}` }}>Product / Plan (C)</TableCell>
+                              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}` }}>
+                                <Box>
+                                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Email / Name</Typography>
+                                  <Typography variant="caption" color="text.secondary">(B)</Typography>
+                                </Box>
+                              </TableCell>
+                              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}` }}>
+                                <Box>
+                                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Product / Plan</Typography>
+                                  <Typography variant="caption" color="text.secondary">(C)</Typography>
+                                </Box>
+                              </TableCell>
                               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, textAlign: 'center' }}>
-                                <Typography variant="subtitle2" sx={{ m: 0, p: 0, letterSpacing: 0 }}>{r.prevPrevLabel} MRR (D)</Typography>
+                                <Box>
+                                  <Typography variant="subtitle2" sx={{ m: 0, p: 0, letterSpacing: 0 }}>{r.prevPrevLabel} MRR</Typography>
+                                  <Typography variant="caption" color="text.secondary">(D)</Typography>
+                                </Box>
                               </TableCell>
                               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, textAlign: 'center' }}>
-                                <Typography variant="subtitle2" sx={{ m: 0, p: 0, letterSpacing: 0 }}>{r.prevLabel} MRR (E)</Typography>
+                                <Box>
+                                  <Typography variant="subtitle2" sx={{ m: 0, p: 0, letterSpacing: 0 }}>{r.prevLabel} MRR</Typography>
+                                  <Typography variant="caption" color="text.secondary">(E)</Typography>
+                                </Box>
                               </TableCell>
-                              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}` }}>Billing Cycle (F)</TableCell>
-                              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, textAlign: 'center' }}>Advance Payment (G)</TableCell>
+                              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}` }}>
+                                <Box>
+                                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Billing Cycle</Typography>
+                                  <Typography variant="caption" color="text.secondary">(F)</Typography>
+                                </Box>
+                              </TableCell>
+                              <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, textAlign: 'center' }}>
+                                <Box>
+                                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Advance Payment</Typography>
+                                  <Typography variant="caption" color="text.secondary">(G)</Typography>
+                                </Box>
+                              </TableCell>
                               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'center' }}>
-                                Customer Status (H)
+                                <Box>
+                                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Customer Status</Typography>
+                                  <Typography variant="caption" color="text.secondary">(H)</Typography>
+                                </Box>
                               </TableCell>
                               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 120, textAlign: 'right' }}>
-                                Payment Status (I)
+                                <Box>
+                                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Payment Status</Typography>
+                                  <Typography variant="caption" color="text.secondary">(I)</Typography>
+                                </Box>
                               </TableCell>
                             </TableRow>
                           </TableHead>
