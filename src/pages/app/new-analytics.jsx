@@ -9,8 +9,8 @@ import { DashboardContent } from 'src/layouts/app';
 import PageHeader from 'src/components/page-header/page-header';
 import ErrorBoundary from 'src/components/error-boundary/error-boundary';
 
-import { AnalyticsConsolidatedTable } from './components/analytics-consolidated-table';
 import { AnalyticsSummary } from './components/analytics-summary';
+import { AnalyticsConsolidatedTable } from './components/analytics-consolidated-table';
 import { PAYMENT_SOURCE, AnalyticsPaymentTable } from './components/analytics-payment-table';
 
 const metadata = { title: `Analytics Dashboard | ${CONFIG.site.name}` };

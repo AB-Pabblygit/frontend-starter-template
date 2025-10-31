@@ -14,8 +14,8 @@ import {
   TableContainer,
 } from '@mui/material';
 
-import { PAYMENT_SOURCE } from './analytics-payment-table';
 import { Iconify } from 'src/components/iconify';
+import { PAYMENT_SOURCE } from './analytics-payment-table';
 
 function toNumber(value) {
   if (value === '-' || value === '' || value == null) return 0;
