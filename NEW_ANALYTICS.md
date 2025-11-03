@@ -39,7 +39,7 @@ Implementation: `src/pages/app/components/analytics-summary.jsx`
 - Active Customers
   - Definition: Customers with at least one Recurring subscription in the selected month.
   - Logic: Count customers where any subscriptionStatus === 'Recurring'.
-- New Customers (New Joined)
+- New Joined Customers
   - Definition: First-ever purchase happened in the selected month (cohort acquisition).
   - Logic: first payment month/year equals selected month/year (regardless of refund/cancel within the month).
 - Churned Customers
@@ -50,8 +50,8 @@ Implementation: `src/pages/app/components/analytics-summary.jsx`
   - Definition: (Churned MRR / Previous Month MRR) × 100.
   - Churned MRR approx: Sum of previousMonthMRR for rows Cancelled/Refunded this month.
 - Net MRR Growth
-  - Definition: New + Expansion – Contraction – Churned MRR.
-  - Current implementation: Expansion/Contraction marked TODO; computed as New – Churned MRR for now.
+  - Definition: New Joined + Expansion – Contraction – Churned MRR.
+  - Current implementation: Expansion/Contraction marked TODO; computed as New Joined – Churned MRR for now.
 - Refunds Issued
   - Definition: Total cash refunded in selected month.
 - Same‑Month Churn
@@ -63,28 +63,28 @@ Implementation: `src/pages/app/components/analytics-summary.jsx`
 ## Revenue Metrics Table (A–V)
 Implementation: `AnalyticsSummary.tableMetrics` in the same file.
 
-- (A) Previous Month Overall MRR: Sum of active MRR in previous month.
-- (B) Active Customers MRR: MRR from customers present both months; sum active current MRR.
-- (C) Cancelled Customers MRR: Sum of previousMonthMRR for rows Cancelled/Refunded this month.
-- (D) New Customer MRR: Sum of active current MRR for New Joined customers.
-- (E) Overall MRR: (B) + (D).
-- (F) Total Revenue: Sum of current-month payments (cash, includes non-MRR if present).
-- (G) Revenue Churn %: ((C)/(A)) × 100.
-- (H) Overall LTV: (E) / (G) × 100.
-- (I) LTV Per Customer: (H) / (Total Customers).
-- (J) Overall CAC: Placeholder (requires external data source).
-- (K) CAC per Customer: (J) / (Total Customers).
-- (L) Total Customers of Previous Month: Count of unique customers previous month.
-- (M) Active Customers: Count of customers with ≥1 Recurring subscription this month.
-- (N) Customers Left: (L) - (M).
-- (O) New Joined Customers: Count of first-ever paying customers this month.
-- (P) Total Customers (Current): (M) + (O).
-- (Q) User Churn %: (N) / (L) × 100.
-- (R) Average Revenue: (E) / (P).
-- (S) Customer Lifetime (Months): 1 / (User Churn % / 100).
-- (T) Refund Count: Count of refunded transactions.
-- (U) Amount Refunded: Sum of refunded amounts (cash).
-- (V) Same‑Month Churn (Count): New Joined who ended inactive in selected month.
+- (A) Previous Month Overall MRR (e.g., Sep 2025): Sum of active MRR in previous month.
+- (B) Active Customers MRR (Both Sep 2025 & Oct 2025): MRR from customers present both months; sum active current MRR.
+- (C) Churned Customers MRR (Oct 2025): Sum of previousMonthMRR for rows Cancelled/Refunded this month.
+- (D) New Joined Customer MRR (Oct 2025): Sum of active current MRR for New Joined customers.
+- (E) Overall MRR (Oct 2025): (B) + (D).
+- (F) Total Revenue (Oct 2025): Sum of current-month payments (cash, includes non-MRR if present).
+- (G) Revenue Churn % (Sep 2025 → Oct 2025): ((C)/(A)) × 100.
+- (H) Overall LTV (Oct 2025): (E) / (G) × 100.
+- (I) LTV Per Customer (Oct 2025): (H) / (Total Customers).
+- (J) Overall CAC (Oct 2025): Placeholder (requires external data source).
+- (K) CAC per Customer (Oct 2025): (J) / (New Joined Customers).
+- (L) Total Customers of Previous Month (Sep 2025): Count of unique customers previous month.
+- (M) Active Customers (Oct 2025): Count of customers with ≥1 Recurring subscription this month.
+- (N) Customers Left (Sep 2025 → Oct 2025): (L) - (M).
+- (O) New Joined Customers (Oct 2025): Count of first-ever paying customers this month.
+- (P) Total Customers in Selected Month (Oct 2025): (M) + (O).
+- (Q) User Churn % (Sep 2025 → Oct 2025): (N) / (L) × 100.
+- (R) Average Revenue (Oct 2025): (E) / (P).
+- (S) Customer Lifetime (Months) (Oct 2025): 1 / (User Churn % / 100).
+- (T) Refund Count (Oct 2025): Count of refunded transactions.
+- (U) Total Amount of Selected Month (Oct 2025): Sum of refunded amounts (cash).
+- (V) Same‑Month Churn (Count) (Oct 2025): New Joined who ended inactive in selected month.
 
 ---
 
@@ -93,7 +93,7 @@ Implementation: `src/pages/app/components/analytics-payment-table.jsx`
 
 Columns and key logic:
 - Payment On (A): Date in `MMM DD, YYYY`; must be within selected month for current view.
-- Email / Name (B): Customer identifiers.
+- Email / Mobile Number / Name (B): Customer identifiers (email, mobile number, full name).
 - Product / Plan (C): Product/service and plan.
 - Previous Month MRR (D): MRR for previous month (per subscription).
 - Current Month MRR (E): MRR for selected month (per subscription).
@@ -114,7 +114,7 @@ Implementation: `src/pages/app/components/analytics-consolidated-table.jsx`
 
 Row aggregation by `email` with rollups:
 - Payment Months (A): Comma-separated `Mon, YYYY` months seen for the customer.
-- Email / Name (B)
+- Email / Mobile Number / Name (B): Customer identifiers (email, mobile number, full name).
 - Product / Plan (C): Single value if uniform; otherwise “Multiple Products/Plans”.
 - Previous Month MRR (D): Sum of previousMonthMRR across subscriptions.
 - Selected Month MRR (E): Sum of currentMonthMRR across subscriptions.
