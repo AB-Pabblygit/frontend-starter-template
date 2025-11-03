@@ -488,7 +488,7 @@ export function AnalyticsSummary({ selectedMonth, selectedYear, selectedProduct 
       ['S', `Total MRR of Selected Month (${currentMonthLabel})`, `Sum of all active subscription MRR for ${currentMonthLabel}`, v(totalRevenue, true)],
       ['T', `Same‑Month Churn (Count) (${currentMonthLabel})`, 'New Joined who ended inactive in selected month', v(sameMonthChurnCustomers)],
     ];
-  }, [byCustomer, prevByCustomer, filtered, selectedMonth, selectedYear]);
+  }, [byCustomer, prevByCustomer, selectedMonth, selectedYear]);
 
   return (
     <Box sx={{ mb: 4 }}>
