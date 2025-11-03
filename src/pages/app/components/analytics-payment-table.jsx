@@ -22,6 +22,7 @@ export const PAYMENT_SOURCE = [
     id: 1,
     name: 'Nimesh Sahu',
     email: 'nimesh.sahu@pabbly.com',
+    mobile: '+1-555-0101',
     paymentDate: '10/29/2025',
     product: 'Pabbly Connect',
     plan: 'Tier 1',
@@ -37,6 +38,7 @@ export const PAYMENT_SOURCE = [
     id: 1_2,
     name: 'Nimesh Sahu',
     email: 'nimesh.sahu@pabbly.com',
+    mobile: '+1-555-0101',
     paymentDate: '10/02/2025',
     product: 'Pabbly Connect',
     plan: 'Tier 2',
@@ -52,6 +54,7 @@ export const PAYMENT_SOURCE = [
     id: 1_3,
     name: 'Nimesh Sahu',
     email: 'nimesh.sahu@pabbly.com',
+    mobile: '+1-555-0101',
     paymentDate: '10/10/2025',
     product: 'Pabbly Connect',
     plan: 'Unlimited Plan',
@@ -67,6 +70,7 @@ export const PAYMENT_SOURCE = [
     id: 2,
     name: 'Neeraj Agarwal',
     email: 'neeraj.agarwal@pabbly.com',
+    mobile: '+1-555-0102',
     paymentDate: '10/15/2025',
     product: 'Pabbly Connect',
     plan: 'Tier 2',
@@ -82,6 +86,7 @@ export const PAYMENT_SOURCE = [
     id: 2_2,
     name: 'Neeraj Agarwal',
     email: 'neeraj.agarwal@pabbly.com',
+    mobile: '+1-555-0102',
     paymentDate: '10/04/2025',
     product: 'Pabbly Connect',
     plan: 'Tier 1',
@@ -97,6 +102,7 @@ export const PAYMENT_SOURCE = [
     id: 2_3,
     name: 'Neeraj Agarwal',
     email: 'neeraj.agarwal@pabbly.com',
+    mobile: '+1-555-0102',
     paymentDate: '10/20/2025',
     product: 'Pabbly Connect',
     plan: 'Unlimited Plan',
@@ -112,6 +118,7 @@ export const PAYMENT_SOURCE = [
     id: 3,
     name: 'Hardik Pradhan',
     email: 'hardik.pradhan@pabbly.com',
+    mobile: '+1-555-0103',
     paymentDate: '10/01/2025',
     product: 'Pabbly Connect',
     plan: 'Unlimited Plan',
@@ -127,6 +134,7 @@ export const PAYMENT_SOURCE = [
     id: 4,
     name: 'Aakash Bhelkar',
     email: 'aakash.bhelkar@pabbly.com',
+    mobile: '+1-555-0104',
     paymentDate: '10/20/2025',
     product: 'Pabbly Connect',
     plan: 'Tier 1',
@@ -142,6 +150,7 @@ export const PAYMENT_SOURCE = [
     id: 5,
     name: 'Sarah Johnson',
     email: 'sarah.johnson@example.com',
+    mobile: '+1-555-0105',
     paymentDate: '10/15/2025',
     product: 'Pabbly Workflow',
     plan: 'Basic Plan',
@@ -157,6 +166,7 @@ export const PAYMENT_SOURCE = [
     id: 6,
     name: 'Mike Wilson',
     email: 'mike.wilson@company.com',
+    mobile: '+1-555-0106',
     paymentDate: '10/01/2025',
     product: 'Pabbly Email Marketing',
     plan: 'Pro Plan',
@@ -172,6 +182,7 @@ export const PAYMENT_SOURCE = [
     id: 7,
     name: 'Lisa Brown',
     email: 'lisa.brown@startup.io',
+    mobile: '+1-555-0107',
     paymentDate: '10/15/2025',
     product: 'Pabbly CRM',
     plan: 'Enterprise Plan',
@@ -187,6 +198,7 @@ export const PAYMENT_SOURCE = [
     id: 8,
     name: 'David Smith',
     email: 'david.smith@business.com',
+    mobile: '+1-555-0108',
     paymentDate: '10/01/2025',
     product: 'Pabbly Analytics',
     plan: 'Starter Plan',
@@ -202,6 +214,7 @@ export const PAYMENT_SOURCE = [
     id: 9,
     name: 'Emma Davis',
     email: 'emma.davis@tech.com',
+    mobile: '+1-555-0109',
     paymentDate: '10/10/2025',
     product: 'Pabbly Connect',
     plan: 'Unlimited Plan',
@@ -217,6 +230,7 @@ export const PAYMENT_SOURCE = [
     id: 10,
     name: 'John Miller',
     email: 'john.miller@corp.com',
+    mobile: '+1-555-0110',
     paymentDate: '10/20/2025',
     product: 'Pabbly Workflow',
     plan: 'Pro Plan',
@@ -232,6 +246,7 @@ export const PAYMENT_SOURCE = [
     id: 11,
     name: 'Alice Cooper',
     email: 'alice.cooper@music.com',
+    mobile: '+1-555-0111',
     paymentDate: '10/05/2025',
     product: 'Pabbly Connect',
     plan: 'Tier 1',
@@ -247,6 +262,7 @@ export const PAYMENT_SOURCE = [
     id: 12,
     name: 'Bob Dylan',
     email: 'bob.dylan@folk.com',
+    mobile: '+1-555-0112',
     paymentDate: '10/12/2025',
     product: 'Pabbly Email Marketing',
     plan: 'Basic Plan',
@@ -262,6 +278,7 @@ export const PAYMENT_SOURCE = [
     id: 13,
     name: 'Carol King',
     email: 'carol.king@songwriter.com',
+    mobile: '+1-555-0113',
     paymentDate: '10/08/2025',
     product: 'Pabbly Connect',
     plan: 'Tier 2',
@@ -277,6 +294,7 @@ export const PAYMENT_SOURCE = [
     id: 13_2,
     name: 'Carol King',
     email: 'carol.king@songwriter.com',
+    mobile: '+1-555-0113',
     paymentDate: '10/15/2025',
     product: 'Pabbly Workflow',
     plan: 'Basic Plan',
@@ -292,6 +310,7 @@ export const PAYMENT_SOURCE = [
     id: 14,
     name: 'David Bowie',
     email: 'david.bowie@glam.com',
+    mobile: '+1-555-0114',
     paymentDate: '10/03/2025',
     product: 'Pabbly CRM',
     plan: 'Enterprise Plan',
@@ -307,6 +326,7 @@ export const PAYMENT_SOURCE = [
     id: 15,
     name: 'Ella Fitzgerald',
     email: 'ella.fitzgerald@jazz.com',
+    mobile: '+1-555-0115',
     paymentDate: '10/18/2025',
     product: 'Pabbly Analytics',
     plan: 'Starter Plan',
@@ -322,6 +342,7 @@ export const PAYMENT_SOURCE = [
     id: 16,
     name: 'Frank Sinatra',
     email: 'frank.sinatra@swing.com',
+    mobile: '+1-555-0116',
     paymentDate: '10/25/2025',
     product: 'Pabbly Connect',
     plan: 'Unlimited Plan',
@@ -337,6 +358,7 @@ export const PAYMENT_SOURCE = [
     id: 16_2,
     name: 'Frank Sinatra',
     email: 'frank.sinatra@swing.com',
+    mobile: '+1-555-0116',
     paymentDate: '10/28/2025',
     product: 'Pabbly Email Marketing',
     plan: 'Pro Plan',
@@ -354,7 +376,8 @@ const COLUMN_DESCRIPTIONS = {
   paymentDate: 'The date when the payment was processed (MMM DD, YYYY). It must fall within the selected month for the current table view.',
   customerStatus: 'Customer-level status derived from all their active subscriptions. Active: At least one subscription is Recurring or New Subscription. Churned: All subscriptions are Cancelled or Refunded. New Joined: First-time paying customer in the current month.',
   name: 'Full name of the customer for identification.',
-  email: 'Customer’s email address used for communication and account reference.',
+  email: 'Customer&apos;s email address used for communication and account reference.',
+  mobile: 'Customer&apos;s mobile number for contact purposes.',
   product: 'The name of the Pabbly product or service the customer is subscribed to.',
   plan: 'The specific subscription plan tier or package name under the product.',
   previousMonthMRR: 'Monthly Recurring Revenue (MRR) from the previous month — for example, September when October is selected. Shown per subscription.',
@@ -444,6 +467,17 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
     return `$${n.toFixed(2)}`;
   };
 
+  /**
+   * Returns the effective MRR for a row.
+   * If the subscription status is Refunded or Cancelled, returns 0; otherwise returns the currentMonthMRR.
+   */
+  const getEffectiveMRR = (row) => {
+    if (row.subscriptionStatus === 'Refunded' || row.subscriptionStatus === 'Cancelled') {
+      return 0;
+    }
+    return toNumber(row.currentMonthMRR);
+  };
+
   const newJoinedByEmail = useMemo(() => {
     const map = new Map();
     filteredData.forEach((row) => {
@@ -501,7 +535,7 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 200 }}>
                 <Box>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Email / Name</Typography>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Email / Mobile Number / Name</Typography>
                   <Typography variant="caption" color="text.secondary">(B)</Typography>
                 </Box>
               </TableCell>
@@ -571,7 +605,7 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                   </Typography>
                 </TableCell>
 
-                {/* Email / Name */}
+                {/* Email / Mobile Number / Name */}
                 <TableCell sx={{ borderBottom: `1px dotted ${theme.palette.divider}`, py: 1.25, px: 2 }}>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                     <Typography 
@@ -584,6 +618,9 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                       }}
                     >
                       {row.email}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
+                      {row.mobile || '—'}
                     </Typography>
                     <Typography variant="body2" color="text.primary" sx={{ fontWeight: 500 }}>
                       {row.name}
@@ -625,7 +662,7 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
                       fontWeight: 600
                     }}
                   >
-                    {formatMoney(row.currentMonthMRR)}
+                    {formatMoney(getEffectiveMRR(row))}
                   </Typography>
                 </TableCell>
 
@@ -729,8 +766,8 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
           <TableRow><TableCell>🟢 New Subscription</TableCell><TableCell>First successful payment for a new subscription.</TableCell><TableCell>Customer becomes Active.</TableCell><TableCell>Customer subscribes to Tier 1 plan for the first time.</TableCell></TableRow>
           <TableRow><TableCell>🔴 Cancelled</TableCell><TableCell>Subscription stopped; no current MRR.</TableCell><TableCell>Customer may still be Active if another plan is active or else the customer is churned.</TableCell><TableCell>One plan cancelled, another still Recurring.</TableCell></TableRow>
           <TableRow><TableCell>🔴 Refunded</TableCell><TableCell>Payment reversed; current MRR becomes $0.</TableCell><TableCell>Customer may still be Active if another plan is active or else the customer is churned.</TableCell><TableCell>If we refund for the only subscription customer has → Churned.</TableCell></TableRow>
-          <TableRow><TableCell>🟠 Upgraded</TableCell><TableCell>Customer’s total MRR increased compared to previous month.</TableCell><TableCell>Customer remains Active.</TableCell><TableCell>Customer moves from $58 → $137 MRR.</TableCell></TableRow>
-          <TableRow><TableCell>🟡 Downgraded</TableCell><TableCell>Customer’s total MRR decreased compared to previous month.</TableCell><TableCell>Customer remains Active.</TableCell><TableCell>Customer moves from $58 → $39 MRR.</TableCell></TableRow>
+          <TableRow><TableCell>🟠 Upgraded</TableCell><TableCell>Customer&apos;s total MRR increased compared to previous month.</TableCell><TableCell>Customer remains Active.</TableCell><TableCell>Customer moves from $58 → $137 MRR.</TableCell></TableRow>
+          <TableRow><TableCell>🟡 Downgraded</TableCell><TableCell>Customer&apos;s total MRR decreased compared to previous month.</TableCell><TableCell>Customer remains Active.</TableCell><TableCell>Customer moves from $58 → $39 MRR.</TableCell></TableRow>
         </TableBody>
       </Table>
     </Card>
@@ -748,8 +785,10 @@ export function AnalyticsPaymentTable({ selectedMonth, selectedYear, selectedPro
         </TableHead>
         <TableBody>
           <TableRow><TableCell>Payment Date</TableCell><TableCell>The date when the payment was processed (MMM DD, YYYY). Must fall within the selected month for the table view.</TableCell></TableRow>
+          <TableRow><TableCell>Email / Mobile Number / Name</TableCell><TableCell>Customer&apos;s email address (primary), mobile number (secondary), and full name for identification. Email is used as a unique identifier for consolidation.</TableCell></TableRow>
           <TableRow><TableCell>Name</TableCell><TableCell>Full name of the customer for identification.</TableCell></TableRow>
-          <TableRow><TableCell>Email</TableCell><TableCell>Customer’s email address used for communication and as a unique identifier for consolidation.</TableCell></TableRow>
+          <TableRow><TableCell>Email</TableCell><TableCell>Customer&apos;s email address used for communication and as a unique identifier for consolidation.</TableCell></TableRow>
+          <TableRow><TableCell>Mobile Number</TableCell><TableCell>Customer&apos;s mobile number for contact purposes.</TableCell></TableRow>
           <TableRow><TableCell>Product</TableCell><TableCell>The name of the Pabbly product or service the customer is subscribed to.</TableCell></TableRow>
           <TableRow><TableCell>Plan</TableCell><TableCell>The specific subscription plan tier or package name under the product.</TableCell></TableRow>
           <TableRow><TableCell>Previous Month MRR</TableCell><TableCell>Monthly Recurring Revenue (MRR) from the previous month (e.g., September when October is selected). Shown per subscription.</TableCell></TableRow>

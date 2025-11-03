@@ -28,6 +28,17 @@ function parseAmount(value) {
   return Number.isFinite(n) ? n : 0;
 }
 
+/**
+ * Returns the effective MRR for an item.
+ * If the subscription status is Refunded or Cancelled, returns 0; otherwise returns the currentMonthMRR.
+ */
+function getEffectiveMRR(item) {
+  if (item.subscriptionStatus === 'Refunded' || item.subscriptionStatus === 'Cancelled') {
+    return 0;
+  }
+  return parseAmount(item.currentMonthMRR);
+}
+
 export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, selectedProduct = 'All', selectedPlan = 'All' }) {
   const theme = useTheme();
   const [page, setPage] = useState(0);
@@ -84,7 +95,7 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
     const map = new Map();
     filtered.forEach((row) => {
       const key = row.email;
-      const group = map.get(key) || { email: row.email, name: row.name, items: [] };
+      const group = map.get(key) || { email: row.email, name: row.name, mobile: row.mobile, items: [] };
       group.items.push(row);
       map.set(key, group);
     });
@@ -109,7 +120,8 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
               );
 
       const sumSeptember = group.items.reduce((acc, i) => acc + parseAmount(i.previousMonthMRR), 0);
-      const sumOctober = group.items.reduce((acc, i) => acc + parseAmount(i.currentMonthMRR), 0);
+      // Use effective MRR (excludes refunded/cancelled subscriptions)
+      const sumOctober = group.items.reduce((acc, i) => acc + getEffectiveMRR(i), 0);
 
       // Check if customer has at least one active subscription (New Subscription or Recurring)
       const hasActiveSubscription = group.items.some(i => 
@@ -163,9 +175,13 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
         return acc;
       }, 0);
 
+      // Get mobile from first item (same per email)
+      const mobile = group.items[0]?.mobile || '—';
+      
       return {
         email: group.email,
         name: group.name,
+        mobile,
         paymentMonths: monthsSet.size ? Array.from(monthsSet).join(', ') : '-',
         latestStatus: customerStatus, // Use calculated customer status
         product: products.length === 1 ? products[0] : 'Multiple Products',
@@ -259,7 +275,7 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}`, minWidth: 200 }}>
                 <Box>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Email / Name</Typography>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Email / Mobile Number / Name</Typography>
                   <Typography variant="caption" color="text.secondary">(B)</Typography>
                 </Box>
               </TableCell>
@@ -312,6 +328,7 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
                   <TableCell sx={{ py: 1, px: 2 }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                       <Typography variant="body2" sx={{ color: 'primary.main', textDecoration: 'underline', fontWeight: 500 }}>{r.email}</Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.75rem' }}>{r.mobile || '—'}</Typography>
                       <Typography variant="body2" sx={{ fontWeight: 500 }}>{r.name}</Typography>
                     </Box>
                   </TableCell>
@@ -359,7 +376,7 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
                               </TableCell>
                               <TableCell sx={{ fontWeight: 600, color: 'text.primary', borderBottom: `1px solid ${theme.palette.divider}` }}>
                                 <Box>
-                                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Email / Name</Typography>
+                                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Email / Mobile Number / Name</Typography>
                                   <Typography variant="caption" color="text.secondary">(B)</Typography>
                                 </Box>
                               </TableCell>
@@ -418,6 +435,7 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
                                 <TableCell>
                                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                                     <Typography variant="body2" sx={{ color: 'primary.main', textDecoration: 'underline', fontWeight: 500 }}>{it.email}</Typography>
+                                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.75rem' }}>{it.mobile || '—'}</Typography>
                                     <Typography variant="body2" sx={{ fontWeight: 500 }}>{it.name}</Typography>
                                   </Box>
                                 </TableCell>
@@ -431,7 +449,7 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
                                   <Typography variant="body2" color="text.primary" sx={{ fontWeight: 600 }}>{formatMoney(it.previousMonthMRR)}</Typography>
                                 </TableCell>
                                 <TableCell align="center" sx={{ fontWeight: 600 }}>
-                                  <Typography variant="body2" color="text.primary" sx={{ fontWeight: 600 }}>{formatMoney(it.currentMonthMRR)}</Typography>
+                                  <Typography variant="body2" color="text.primary" sx={{ fontWeight: 600 }}>{formatMoney(getEffectiveMRR(it))}</Typography>
                                 </TableCell>
                                 <TableCell>
                                   <Typography variant="body2" color="text.primary">{it.frequency}</Typography>
@@ -530,7 +548,7 @@ export function AnalyticsConsolidatedTable({ selectedMonth, selectedYear, select
         <TableBody>
           <TableRow><TableCell>Payment Months</TableCell><TableCell>Comma-separated list of months in which payments occurred (e.g., Oct 2025).</TableCell></TableRow>
           <TableRow><TableCell>Payment Status</TableCell><TableCell>Consolidated subscription status across all customer subscriptions (e.g., Upgraded, Downgraded, Recurring, New Subscription, Cancelled / Refunded).</TableCell></TableRow>
-          <TableRow><TableCell>Email / Name</TableCell><TableCell>Customer’s email (clickable) and full name, used as a unique identifier for customer consolidation.</TableCell></TableRow>
+          <TableRow><TableCell>Email / Mobile Number / Name</TableCell><TableCell>Customer&apos;s email (clickable), mobile number (secondary), and full name, used as a unique identifier for customer consolidation.</TableCell></TableRow>
           <TableRow><TableCell>Product / Plan</TableCell><TableCell>Displays a single product/plan if all subscriptions are identical; otherwise shows “Multiple Products” or “Multiple Plans.”</TableCell></TableRow>
           <TableRow><TableCell>Customer Status</TableCell><TableCell>Derived at the customer level: Active if any plan is Recurring or New Subscription, Churned if all plans are Cancelled or Refunded.</TableCell></TableRow>
           <TableRow><TableCell>September MRR / October MRR</TableCell><TableCell>Displays total MRR across all subscriptions for: • Previous month (September) • Selected month (October) — calculated by summing all active subscription MRRs.</TableCell></TableRow>

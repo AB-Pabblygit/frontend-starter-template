@@ -1,0 +1,213 @@
+# New Analytics Documentation
+
+## Overview
+The New Analytics section provides cohort-aligned, month-sensitive MRR and churn analytics with two synchronized views:
+- Stats Cards (Top KPIs)
+- Revenue Metrics Table (A–V)
+- Expanded Data Table (subscription-level rows)
+- Consolidated Data Table (customer-level rollups with collapsible details)
+
+All calculations react to filters: month, year, product, and plan.
+
+## Shared Concepts
+- Month/Year: Selected via UI; all “selected month” metrics reflect that month.
+- Previous Month: The calendar month immediately before the selected month.
+- Active subscription: subscriptionStatus in {Recurring, New Subscription}.
+- Currency format: `$X.XX`.
+- Date format: `MMM DD, YYYY`.
+
+## Customer Status (per customer)
+- Active: At least one subscription is Active (Recurring or New Subscription) in the selected month.
+- New Joined: First-ever purchase occurs in the selected month (even if refunded/cancelled within the same month).
+- Churned: No active subscriptions in the selected month. Includes same-month churn after being New Joined.
+
+## Subscription Status (per row in Expanded / per consolidated trend)
+- Recurring: Ongoing billing for the month.
+- New Subscription: First paid month.
+- Cancelled: Subscription stopped; current month MRR is $0.
+- Refunded: Payment reversed; current month MRR becomes $0.
+- Upgraded/Downgraded (Consolidated): Based on total MRR increase/decrease from previous to selected month.
+
+---
+
+## Stats Cards (Top KPIs)
+Implementation: `src/pages/app/components/analytics-summary.jsx`
+
+- Total Customers in Selected Month
+  - Definition: Active Recurring customers + New Joined customers in the selected month.
+  - Logic: Recurring-only continue + first-ever purchasers this month.
+- Active Customers
+  - Definition: Customers with at least one Recurring subscription in the selected month.
+  - Logic: Count customers where any subscriptionStatus === 'Recurring'.
+- New Joined Customers
+  - Definition: First-ever purchase happened in the selected month (cohort acquisition).
+  - Logic: first payment month/year equals selected month/year (regardless of refund/cancel within the month).
+- Churned Customers
+  - Definition: Were present previous month with active items, but no active subscription now.
+- Total MRR
+  - Definition: Sum of currentMonthMRR for active subscriptions (Recurring/New Subscription) in selected month.
+- Revenue Churn %
+  - Definition: (Churned MRR / Previous Month MRR) × 100.
+  - Churned MRR approx: Sum of previousMonthMRR for rows Cancelled/Refunded this month.
+- Net MRR Growth
+  - Definition: New Joined + Expansion – Contraction – Churned MRR.
+  - Current implementation: Expansion/Contraction marked TODO; computed as New Joined – Churned MRR for now.
+- Refunds Issued
+  - Definition: Total cash refunded in selected month.
+- Same‑Month Churn
+  - Definition: Count of New Joined customers who ended the month without any active subscription.
+  - Icon: `lucide:user-x`.
+
+---
+
+## Revenue Metrics Table (A–V)
+Implementation: `AnalyticsSummary.tableMetrics` in the same file.
+
+- (A) Previous Month Overall MRR (e.g., Sep 2025): Sum of active MRR in previous month.
+- (B) Active Customers MRR (Both Sep 2025 & Oct 2025): MRR from customers present both months; sum active current MRR.
+- (C) Churned Customers MRR (Oct 2025): Sum of previousMonthMRR for rows Cancelled/Refunded this month.
+- (D) New Joined Customer MRR (Oct 2025): Sum of active current MRR for New Joined customers.
+- (E) Overall MRR (Oct 2025): (B) + (D).
+- (F) Total Revenue (Oct 2025): Sum of current-month payments (cash, includes non-MRR if present).
+- (G) Revenue Churn % (Sep 2025 → Oct 2025): ((C)/(A)) × 100.
+- (H) Overall LTV (Oct 2025): (E) / (G) × 100.
+- (I) LTV Per Customer (Oct 2025): (H) / (Total Customers).
+- (J) Overall CAC (Oct 2025): Placeholder (requires external data source).
+- (K) CAC per Customer (Oct 2025): (J) / (New Joined Customers).
+- (L) Total Customers of Previous Month (Sep 2025): Count of unique customers previous month.
+- (M) Active Customers (Oct 2025): Count of customers with ≥1 Recurring subscription this month.
+- (N) Customers Left (Sep 2025 → Oct 2025): (L) - (M).
+- (O) New Joined Customers (Oct 2025): Count of first-ever paying customers this month.
+- (P) Total Customers in Selected Month (Oct 2025): (M) + (O).
+- (Q) User Churn % (Sep 2025 → Oct 2025): (N) / (L) × 100.
+- (R) Average Revenue (Oct 2025): (E) / (P).
+- (S) Customer Lifetime (Months) (Oct 2025): 1 / (User Churn % / 100).
+- (T) Refund Count (Oct 2025): Count of refunded transactions.
+- (U) Total Amount of Selected Month (Oct 2025): Sum of refunded amounts (cash).
+- (V) Same‑Month Churn (Count) (Oct 2025): New Joined who ended inactive in selected month.
+
+---
+
+## Expanded Data Table (Subscription-level)
+Implementation: `src/pages/app/components/analytics-payment-table.jsx`
+
+Columns and key logic:
+- Payment On (A): Date in `MMM DD, YYYY`; must be within selected month for current view.
+- Email / Mobile Number / Name (B): Customer identifiers (email, mobile number, full name).
+- Product / Plan (C): Product/service and plan.
+- Previous Month MRR (D): MRR for previous month (per subscription).
+- Current Month MRR (E): MRR for selected month (per subscription).
+- Billing Cycle (F): Monthly or Yearly.
+- Advance Payment (G): For yearly plans: remaining prepaid balance (months × per‑month amount); “—” for monthly.
+- Customer Status (H): Derived per customer across subscriptions (Active, New Joined, Churned).
+- Payment Status (I): Subscription-level status (Recurring, New Subscription, Cancelled, Refunded).
+
+Helpers:
+- Active status = New Subscription or Recurring.
+- toNumber/formatMoney sanitize and format currency values.
+- Filtering respects product/plan; month/year mainly drive headers and the summary sections.
+
+---
+
+## Consolidated Data Table (Customer-level)
+Implementation: `src/pages/app/components/analytics-consolidated-table.jsx`
+
+Row aggregation by `email` with rollups:
+- Payment Months (A): Comma-separated `Mon, YYYY` months seen for the customer.
+- Email / Mobile Number / Name (B): Customer identifiers (email, mobile number, full name).
+- Product / Plan (C): Single value if uniform; otherwise “Multiple Products/Plans”.
+- Previous Month MRR (D): Sum of previousMonthMRR across subscriptions.
+- Selected Month MRR (E): Sum of currentMonthMRR across subscriptions.
+- Advance Payment (G): Sum of yearly plan advance balances; “—” if none.
+- Customer Status (H): Active, New Joined, or Churned (see rules above).
+- Payment Status (I): Consolidated trend based on MRR movement and statuses (Upgraded, Downgraded, Recurring, New Subscription, Cancelled, Refunded).
+
+Consolidated rules:
+- Active if any subscription is Active (Recurring or New Subscription).
+- New Joined if all subscriptions are New Subscription and previous-month total MRR = 0.
+- Churned if no Active subscriptions.
+- Consolidated status trend:
+  - New Subscription: previous total MRR = 0, current > 0.
+  - Upgraded: current total MRR > previous total MRR.
+  - Downgraded: current total MRR < previous total MRR.
+  - Recurring: current total MRR = previous total MRR and active exists.
+  - Cancelled/Refunded: no active subscriptions; most recent status indicates variant.
+
+Collapsible subscription details include per-subscription columns matching Expanded view, with aligned letter indices.
+
+---
+
+## Same‑Month Churn Handling
+- Counted as New Joined for acquisition truth in the selected month.
+- Also counted as Same‑Month Churn if they end the month inactive.
+- They do not appear in next month unless reactivated.
+- Revenue impact: net to zero in MRR if fully refunded/cancelled.
+
+---
+
+## Edge Cases
+- Partial refunds: Customer may remain Active; refunds reduce cash totals but not active counts.
+- Multiple subscriptions: Customer can be Active even if one subscription is Cancelled, as long as another is Active.
+- Mixed billing cycles: Consolidated frequency displays Mixed.
+- Missing/invalid dates or amounts: Safely coerced to defaults; invalid dates shown as 'Invalid Date' in consolidated details.
+
+---
+
+## Implementation Notes
+- Locations: `analytics-summary.jsx`, `analytics-payment-table.jsx`, `analytics-consolidated-table.jsx`.
+- Tooltips: Defined via `metricTooltips` and rendered on hover.
+- Icons: Iconify; special cases for Revenue Churn %, Net MRR Growth, Same‑Month Churn.
+- Styling: Consistent card radii, dotted table separators, and padding.
+- TODOs: Expansion/Contraction deltas for Net MRR Growth; CAC data source.
+
+---
+
+## Example Scenarios (Edge Cases)
+
+- Same‑Month Refund (New then Refunded)
+  - Event: Customer makes first purchase in selected month, then gets a refund in the same month.
+  - Result:
+    - Customer Status: New Joined (for the selected month)
+    - Same‑Month Churn: +1 (they end the month inactive)
+    - Active Customers (M): Not counted if no Recurring subscription
+    - Totals: Counted in Total Customers (P). Refund impacts cash totals and churned MRR.
+
+- Multi‑Plan Customer (One Cancelled, One Active)
+  - Event: Customer cancels one plan but keeps another active.
+  - Result:
+    - Customer Status: Active (has at least one active subscription)
+    - Consolidated Status: Based on total MRR movement (Upgraded/Downgraded/Recurring)
+    - Not counted as Churned.
+
+- Partial Refund on First Purchase
+  - Event: First‑time purchase gets partial refund.
+  - Result:
+    - Customer Status: New Joined
+    - Same‑Month Churn: 0 (still active if any active subscription remains)
+    - Refunds Issued (H) and Amount Refunded (U) reflect cash impact.
+
+- Upgrade, Then Downgrade in Same Month
+  - Event: Customer increases MRR, then reduces within the same month.
+  - Result:
+    - Consolidated Status: Reflects net MRR change for the month (Upgraded/Downgraded)
+    - Customer Status: Active if any active subscription exists.
+
+- Chargeback in Same Month
+  - Event: First‑time purchase is charged back.
+  - Result:
+    - Customer Status: New Joined
+    - Same‑Month Churn: +1 if ends month inactive
+    - Refund/Chargeback counts and cash totals reflect the reversal.
+
+- Annual Prepay Refunded Within Month
+  - Event: Yearly plan paid, later refunded the same month.
+  - Result:
+    - Customer Status: New Joined
+    - Same‑Month Churn: +1 if no active subs remain
+    - Advance Payment: Resets to “—”; cash totals adjusted via refunds.
+
+- Mixed Billing Cycles
+  - Event: Customer holds Monthly and Yearly subscriptions.
+  - Result:
+    - Frequency (Consolidated): Mixed
+    - Customer Status: Active if any active sub exists; New Joined if first-ever purchase this month.
