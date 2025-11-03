@@ -14,6 +14,8 @@ import {
   TableContainer,
 } from '@mui/material';
 
+import { Iconify } from 'src/components/iconify';
+
 import { PAYMENT_SOURCE } from './analytics-payment-table';
 
 // Metric tooltips for cards (A–H) and table (A–U)
@@ -212,8 +214,9 @@ export function AnalyticsSummary({ selectedMonth, selectedYear, selectedProduct 
     return group;
   }, [prevRows]);
 
-  // Calculate all metrics for the table (previously split between stats cards and table)
-  const tableMetrics = useMemo(() => {
+  // Top 8 metrics (A–H)
+  const metrics = useMemo(() => {
+    const totalCustomers = byCustomer.size;
 
     let activeCustomers = 0; // includes Recurring and New Subscription
     let activeRecurringCustomers = 0; // Recurring only
@@ -349,27 +352,45 @@ export function AnalyticsSummary({ selectedMonth, selectedYear, selectedProduct 
       }
       return sum;
     }, 0);
-    
     // TODO: derive expansion and contraction deltas at customer-level
     const expansion = 0; // TODO
     const contraction = 0; // TODO
     const netMrrGrowth = newMRR + expansion - contraction - churnedMRR;
-    
-    // Calculate month labels
+
+    // Total Customers = Active Customers + New Joined Customers (matches consolidated table logic)
+    const totalCustomersSelectedMonth = activeCustomersCountForTotal + newCustomers;
+    const items = [
+      { key: 'A', title: 'Total Customers in Selected Month', value: totalCustomersSelectedMonth, tooltip: 'Total Customers = Active Customers + New Joined Customers (matches consolidated table logic).', icon: 'solar:users-group-two-rounded-bold', color: 'primary.main' },
+      { key: 'B', title: 'Active Customers', value: activeCustomersCountForTotal, tooltip: 'Customers with at least one active subscription (Recurring or New Subscription) who are NOT New Joined (matches consolidated table).', icon: 'solar:users-group-rounded-bold', color: 'success.main' },
+      { key: 'C', title: 'New Joined Customers', value: newCustomers, tooltip: 'Customers where all subscriptions are "New Subscription" AND previous month MRR = 0 (matches consolidated table).', icon: 'solar:user-plus-bold', color: 'info.main' },
+      { key: 'D', title: 'Churned Customers', value: churnedCustomers, tooltip: 'Customers who had active plans before but now have none.', icon: 'solar:user-minus-bold', color: 'error.main' },
+      { key: 'E', title: 'Total MRR', value: formatMoney(totalMRR), tooltip: 'Sum of all active subscription MRR for the current month.', icon: 'solar:dollar-minimalistic-bold', color: 'primary.main' },
+      { key: 'F', title: 'Total MRR Churn %', value: `${revenueChurnPct.toFixed(1)}%`, tooltip: 'Churned MRR / Previous Month MRR × 100.', icon: 'lucide:trending-down', color: 'error.main' },
+      { key: 'G', title: 'Net MRR Growth', value: formatMoney(netMrrGrowth), tooltip: 'New Joined + Expansion – Contraction – Churned MRR. TODO: expansion/contraction.', icon: netMrrGrowth >= 0 ? 'lucide:trending-up' : 'lucide:trending-down', color: netMrrGrowth >= 0 ? 'success.main' : 'error.main' },
+      { key: 'H', title: 'Refunds Issued', value: formatMoney(refundsIssued), tooltip: 'Total cash amount refunded this month.', icon: 'solar:card-bold', color: 'warning.main' },
+      { key: 'SM', title: 'Same‑Month Churn', value: sameMonthChurnCustomers, tooltip: 'New Joined customers who ended the selected month with no active subscriptions (refunded/cancelled within same month).', icon: 'lucide:user-x', color: 'warning.main' },
+    ];
+    return items;
+  }, [byCustomer, prevByCustomer, filtered]);
+
+  const tableMetrics = useMemo(() => {
     const prevMonthIndex = (selectedMonth + 11) % 12;
     const prevYear = selectedMonth === 0 ? selectedYear - 1 : selectedYear;
     const currentMonthLabel = getMonthLabel(selectedMonth, selectedYear);
     const prevMonthLabel = getMonthLabel(prevMonthIndex, prevYear);
     
-    // Previous Month Overall MRR
+    const totalCustomers = byCustomer.size;
+    // Previous Month Overall MRR (A)
     const prevOverallMRR = Array.from(prevByCustomer.values()).flatMap(g => g.items).reduce((s, it) => s + toNumber(it.currentMonthMRR), 0);
-    // Active Customers MRR — customers that existed both months; sum current MRR for their active items
+    // Active Customers MRR (B) — customers that existed both months; sum current MRR for their active items
     const continuingEmails = Array.from(prevByCustomer.keys()).filter(e => byCustomer.has(e));
     const activeCustomersMRR = continuingEmails.reduce((sum, email) => {
       const items = (byCustomer.get(email)?.items || []).filter(it => isActiveStatus(it.subscriptionStatus));
       return sum + items.reduce((s, it) => s + toNumber(it.currentMonthMRR), 0);
     }, 0);
-    // New Customer MRR — matches consolidated table: New Joined customers only
+    // Cancelled Customers MRR (C) — churnedMRR from above approximation
+    const churnedMRR = Array.from(byCustomer.values()).flatMap(g => g.items).filter(it => it.subscriptionStatus === 'Cancelled' || it.subscriptionStatus === 'Refunded').reduce((s, it) => s + toNumber(it.previousMonthMRR), 0);
+    // New Customer MRR (D) — matches consolidated table: New Joined customers only
     const newCustomerMRR = Array.from(byCustomer.values()).reduce((sum, g) => {
       const sumPreviousMonthMRR = g.items.reduce((acc, it) => acc + toNumber(it.previousMonthMRR), 0);
       const allNewSubscription = g.items.every((it) => it.subscriptionStatus === 'New Subscription');
@@ -379,79 +400,169 @@ export function AnalyticsSummary({ selectedMonth, selectedYear, selectedProduct 
       }
       return sum;
     }, 0);
-    // Total MRR Value = Active Customers MRR + New Customer MRR
+    // Total MRR (E) = B + D
     const totalMRRValue = activeCustomersMRR + newCustomerMRR;
-    // Total MRR Churn % - use previousMonthMRR and churnedMRR already calculated above
-    const revenueChurnPctTable = prevOverallMRR > 0 ? (churnedMRR / prevOverallMRR) * 100 : 0;
-    // Total LTV
-    const totalLTV = revenueChurnPctTable > 0 ? (totalMRRValue / (revenueChurnPctTable / 100)) : 0;
-    // LTV per Customer
-    const totalCustomersForLTV = byCustomer.size;
-    const ltvPerCustomer = totalCustomersForLTV > 0 ? totalLTV / totalCustomersForLTV : 0;
-    // Calculate metrics that were in stats cards (must be before other calculations)
-    const totalCustomersSelectedMonth = activeCustomersCountForTotal + newCustomers;
-    
-    // Total Customers Last Month
+    // Total MRR Churn % (F) - note: index shifted after removing Total Revenue
+    const revenueChurnPct = prevOverallMRR > 0 ? (churnedMRR / prevOverallMRR) * 100 : 0;
+    // Total LTV (G) = (E) / (F) × 100
+    const totalLTV = revenueChurnPct > 0 ? (totalMRRValue / (revenueChurnPct / 100)) : 0;
+    // LTV per Customer (H)
+    const ltvPerCustomer = totalCustomers > 0 ? totalLTV / totalCustomers : 0;
+    // Total Customers Last Month (I)
     const totalCustomersLastMonth = prevByCustomer.size;
-    // Active Customers — matches consolidated table: has active subscription AND is NOT New Joined
-    // (use activeCustomersCountForTotal already calculated above)
-    // Customers Left
-    const customersLeft = Math.max(0, totalCustomersLastMonth - activeCustomersCountForTotal);
-    // User Churn %
+    // Active Customers (J) — matches consolidated table: has active subscription AND is NOT New Joined
+    const activeCustomersCount = Array.from(byCustomer.values()).filter(g => {
+      const sumPreviousMonthMRR = g.items.reduce((acc, it) => acc + toNumber(it.previousMonthMRR), 0);
+      const allNewSubscription = g.items.every((it) => it.subscriptionStatus === 'New Subscription');
+      const isNewJoinedCustomer = allNewSubscription && sumPreviousMonthMRR === 0;
+      const hasActiveSubscription = g.items.some((it) => 
+        it.subscriptionStatus === 'New Subscription' || it.subscriptionStatus === 'Recurring'
+      );
+      return hasActiveSubscription && !isNewJoinedCustomer;
+    }).length;
+    // Customers Left (K) = I - J
+    const customersLeft = Math.max(0, totalCustomersLastMonth - activeCustomersCount);
+    // New Joined Customers (L) — matches consolidated table logic
+    const newJoinedCustomers = Array.from(byCustomer.values()).filter(g => {
+      const sumPreviousMonthMRR = g.items.reduce((acc, it) => acc + toNumber(it.previousMonthMRR), 0);
+      const allNewSubscription = g.items.every((it) => it.subscriptionStatus === 'New Subscription');
+      return allNewSubscription && sumPreviousMonthMRR === 0;
+    }).length;
+    // Total Customers in Selected Month (M) = Active Customers + New Joined Customers (matches consolidated table)
+    const totalCustomersCurrent = activeCustomersCount + newJoinedCustomers;
+    // User Churn % (N) = K / I × 100
     const userChurnPct = totalCustomersLastMonth > 0 ? (customersLeft / totalCustomersLastMonth) * 100 : 0;
-    // Average MRR
-    const avgRevenue = totalCustomersSelectedMonth > 0 ? totalMRR / totalCustomersSelectedMonth : 0;
-    // Customer Lifetime (Months)
+    // Average MRR (O) = E / M
+    const avgRevenue = totalCustomersCurrent > 0 ? totalMRRValue / totalCustomersCurrent : 0;
+    // Customer Lifetime (Months) (P) = 1 / (User Churn % / 100)
     const customerLifetimeMonths = userChurnPct > 0 ? 1 / (userChurnPct / 100) : 0;
-    // Refund Count
-    const refundCount = Array.from(byCustomer.values()).flatMap(g => g.items).filter(it => it.subscriptionStatus === 'Refunded').length;
+    // Refund Count (Q)
+    const refunds = Array.from(byCustomer.values()).flatMap(g => g.items).filter(it => it.subscriptionStatus === 'Refunded');
+    const refundCount = refunds.length;
     // Total MRR for metric R (sum of all active subscription MRR)
     const totalRevenue = Array.from(byCustomer.values()).flatMap(g => g.items).reduce((s, it) => s + getEffectiveMRR(it), 0);
 
+    // Compute Total Revenue of Selected Month (F):
+    // F = MRR (E) minus monthly share of new yearly subs + full cash of new yearly subs
+    const newYearlySubs = Array.from(byCustomer.values())
+      .flatMap((g) => g.items)
+      .filter((it) =>
+        it.subscriptionStatus === 'New Subscription' && String(it.frequency).toLowerCase() === 'yearly'
+      );
+    const monthlyShareOfNewYearly = newYearlySubs.reduce((s, it) => s + toNumber(it.currentMonthMRR), 0);
+    const yearlyCash = newYearlySubs.reduce((s, it) => s + (toNumber(it.currentMonthMRR) * 12), 0);
+    const totalRevenueSelectedMonth = (totalMRRValue - monthlyShareOfNewYearly) + yearlyCash;
+
     const v = (x, money = false) => (x == null ? '—' : (money ? formatMoney(x) : x));
-    
-    // Note: totalMRR already calculated above in the byCustomer.forEach loop
-    // Note: sameMonthChurnCustomers already calculated above in the byCustomer.forEach loop
-    
+
+    // Compute same‑month churn count here for table — matches consolidated table logic
+    let sameMonthChurnCustomers = 0;
+    byCustomer.forEach((g) => {
+      const sumPreviousMonthMRR = g.items.reduce((acc, it) => acc + toNumber(it.previousMonthMRR), 0);
+      const allNewSubscription = g.items.every((it) => it.subscriptionStatus === 'New Subscription');
+      const isNewJoinedCustomer = allNewSubscription && sumPreviousMonthMRR === 0;
+      const endedInactive = !g.items.some((it) => isActiveStatus(it.subscriptionStatus));
+      if (isNewJoinedCustomer && endedInactive) sameMonthChurnCustomers += 1;
+    });
+
     return [
-      // Customer Metrics (from stats cards)
-      ['A', `Total Customers in Selected Month (${currentMonthLabel})`, 'Active Customers + New Joined Customers', v(totalCustomersSelectedMonth)],
-      ['B', `Active Customers (${currentMonthLabel})`, 'Customers with ≥1 active subscription (excluding New Joined)', v(activeCustomersCountForTotal)],
-      ['C', `New Joined Customers (${currentMonthLabel})`, 'First-time customers this month', v(newCustomers)],
-      ['D', `Churned Customers (${currentMonthLabel})`, 'Customers who had active plans before but now have none', v(churnedCustomers)],
-      ['E', `Total MRR (${currentMonthLabel})`, 'Sum of all active subscription MRR for the current month', v(formatMoney(totalMRR), true)],
-      ['F', `Total MRR Churn % (${prevMonthLabel} → ${currentMonthLabel})`, 'Churned MRR / Previous Month MRR × 100', `${(Number.isFinite(revenueChurnPctTable) ? revenueChurnPctTable : 0).toFixed(1)}%`],
-      ['G', `Net MRR Growth (${currentMonthLabel})`, 'New Joined MRR - Churned MRR (expansion/contraction not yet implemented)', v(formatMoney(netMrrGrowth), true)],
-      ['H', `Refunds Issued (${currentMonthLabel})`, 'Total cash amount refunded this month', v(formatMoney(refundsIssued), true)],
-      ['I', `Same‑Month Churn (Count) (${currentMonthLabel})`, 'New Joined customers who ended inactive in selected month', v(sameMonthChurnCustomers)],
-      
-      // MRR Metrics (from table)
-      ['J', `Previous Month Total MRR (${prevMonthLabel})`, `Total MRR in previous month (${prevMonthLabel}, consolidated)`, v(prevOverallMRR, true)],
-      ['K', `Active Customers MRR (Both ${prevMonthLabel} & ${currentMonthLabel})`, `MRR from customers present both months (${prevMonthLabel} & ${currentMonthLabel})`, v(activeCustomersMRR, true)],
-      ['L', `Churned Customers MRR (${currentMonthLabel})`, `MRR lost from churned customers (${currentMonthLabel})`, v(churnedMRR, true)],
-      ['M', `New Joined Customer MRR (${currentMonthLabel})`, `MRR from New Joined customers (${currentMonthLabel})`, v(newCustomerMRR, true)],
-      ['N', `Total Customers of Previous Month (${prevMonthLabel})`, `New Joined Customers + Active Customers in ${prevMonthLabel}`, v(totalCustomersLastMonth)],
-      ['O', `Customers Left (${prevMonthLabel} → ${currentMonthLabel})`, '(N) - (B)', v(customersLeft)],
-      ['P', `User Churn % (${prevMonthLabel} → ${currentMonthLabel})`, '((O)/(N)) × 100', `${(Number.isFinite(userChurnPct) ? userChurnPct : 0).toFixed(1)}%`],
-      ['Q', `Average MRR per Customer (${currentMonthLabel})`, '(E)/(A)', v(avgRevenue, true)],
-      ['R', `Total MRR of Selected Month (${currentMonthLabel})`, `Sum of all active subscription MRR for ${currentMonthLabel}`, v(totalRevenue, true)],
-      
-      // Financial Metrics
-      ['S', `Total LTV (${currentMonthLabel})`, '(E) / (F) × 100', v(totalLTV, true)],
-      ['T', `LTV Per Customer (${currentMonthLabel})`, '(S) / (Total Customers)', v(ltvPerCustomer, true)],
-      ['U', `Customer Lifetime (Months) (${currentMonthLabel})`, '1 / (User Churn % / 100)', v(customerLifetimeMonths)],
-      
-      // Refund Metrics
-      ['V', `Refund Count (${currentMonthLabel})`, 'Number of refunded transactions', v(refundCount)],
+      // A–V arranged per screenshot sequence
+      ['A', `Previous Month Total MRR (${prevMonthLabel})`, `Total MRR in previous month (${prevMonthLabel}, consolidated)`, v(prevOverallMRR, true)],
+      ['B', `Active Customers MRR (Both ${prevMonthLabel} & ${currentMonthLabel})`, `MRR from customers present both months (${prevMonthLabel} & ${currentMonthLabel})`, v(activeCustomersMRR, true)],
+      ['C', `Churned Customers MRR (${currentMonthLabel})`, `MRR lost from cancelled/refunded customers (${currentMonthLabel})`, v(churnedMRR, true)],
+      ['D', `New Customer MRR (${currentMonthLabel})`, `MRR from first-time customers this month`, v(newCustomerMRR, true)],
+      ['E', `Total MRR (${currentMonthLabel})`, '(B) + (D)', v(totalMRRValue, true)],
+      ['F', `Total Revenue (${currentMonthLabel})`, 'MRR − monthly share of new yearly + full cash of new yearly', v(totalRevenueSelectedMonth, true)],
+      ['G', `Total MRR Churn % (${prevMonthLabel} → ${currentMonthLabel})`, '((C) / (A)) × 100', `${(Number.isFinite(revenueChurnPct) ? revenueChurnPct : 0).toFixed(1)}%`],
+      ['H', `Total LTV (${currentMonthLabel})`, '(E) / (G) × 100', v(totalLTV, true)],
+      ['I', `LTV Per Customer (${currentMonthLabel})`, '(H) / (Total Customers)', v(ltvPerCustomer, true)],
+      ['J', `Total Customers of Previous Month (${prevMonthLabel})`, `New Customers + Active Customers in ${prevMonthLabel}`, v(totalCustomersLastMonth)],
+      ['K', `Active Customers (${currentMonthLabel})`, 'Customers with ≥1 active subscription', v(activeCustomersCount)],
+      ['L', `Customers Left (${prevMonthLabel} → ${currentMonthLabel})`, '(J) - (K)', v(customersLeft)],
+      ['M', `New Joined Customers (${currentMonthLabel})`, 'First-time customers this month', v(newJoinedCustomers)],
+      ['N', `Total Customers in Selected Month (${currentMonthLabel})`, '(K) + (M)', v(totalCustomersCurrent)],
+      ['O', `User Churn % (${prevMonthLabel} → ${currentMonthLabel})`, '((L)/(J)) × 100', `${(Number.isFinite(userChurnPct) ? userChurnPct : 0).toFixed(1)}%`],
+      ['P', `Average MRR (${currentMonthLabel})`, '(E)/(N)', v(avgRevenue, true)],
+      ['Q', `Customer Lifetime (Months) (${currentMonthLabel})`, '1 / (User Churn % / 100)', v(customerLifetimeMonths)],
+      ['R', `Refund Count (${currentMonthLabel})`, 'Number of refunded transactions', v(refundCount)],
+      ['S', `Total MRR of Selected Month (${currentMonthLabel})`, `Sum of all active subscription MRR for ${currentMonthLabel}`, v(totalRevenue, true)],
+      ['T', `Same‑Month Churn (Count) (${currentMonthLabel})`, 'New Joined who ended inactive in selected month', v(sameMonthChurnCustomers)],
     ];
   }, [byCustomer, prevByCustomer, filtered, selectedMonth, selectedYear]);
 
   return (
     <Box sx={{ mb: 4 }}>
-      {/* MRR Metrics Table */}
+      {/* 4x2 Stats Cards Grid */}
+      {false && (
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: 'repeat(1, 1fr)',
+            sm: 'repeat(2, 1fr)',
+            md: 'repeat(4, 1fr)',
+          },
+          gap: 3,
+          mb: 4,
+        }}
+      >
+        {metrics.map((m) => (
+          <Tooltip
+            key={m.key}
+            arrow
+            placement="top"
+            disableInteractive
+            title={
+              <Box>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{m.title}</Typography>
+                <Typography variant="body2">{m.tooltip}</Typography>
+              </Box>
+            }
+          >
+            <Card sx={{ p: 3, borderRadius: '24px', boxShadow: '0 4px 15px rgba(0,0,0,0.08)', position: 'relative', overflow: 'hidden' }}>
+              {/* Accent circle: slightly larger than icon */}
+              <Box sx={{ position: 'absolute', right: -10, top: -10, width: 90, height: 90, borderRadius: '50%', background: (theme) => theme.palette.action.hover, zIndex: 0 }} />
+              {/* Icon (ensure always present for F & G) */}
+              <Iconify 
+                icon={
+                  m.key === 'F'
+                    ? 'lucide:trending-down' // Total MRR Churn %
+                    : m.key === 'G'
+                      ? ((typeof m.value === 'string' && m.value.includes('-')) ? 'lucide:trending-down' : 'lucide:trending-up') // Net MRR Growth
+                      : m.key === 'SM'
+                        ? 'lucide:user-x' // Same Month Churn
+                        : (m.icon || 'solar:chart-square-bold')
+                }
+                sx={{ 
+                  width: 48, 
+                  height: 48, 
+                  color:
+                    m.key === 'F'
+                      ? 'error.main'
+                      : m.key === 'G'
+                        ? ((typeof m.value === 'string' && m.value.includes('-')) ? 'error.main' : 'success.main')
+                        : m.key === 'SM'
+                          ? 'warning.main'
+                          : (m.color || 'primary.main'),
+                  position: 'absolute', 
+                  right: 12, 
+                  top: 12, 
+                  opacity: 0.95,
+                  zIndex: 1,
+                }} 
+              />
+              <Typography variant="h4" sx={{ mb: 1 }}>{m.value}</Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>{m.title}</Typography>
+            </Card>
+          </Tooltip>
+        ))}
+      </Box>
+      )}
+
+      {/* Metrics Table A–U */}
       <Card sx={{ p: 0, borderRadius: '16px' }}>
         <Box sx={{ px: 3, pt: 2, pb: 1.5 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>MRR Metrics</Typography>
+          <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>Revenue Metrics</Typography>
         </Box>
         <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 0, overflowX: 'auto' }}>
           <Table size="small" sx={{ minWidth: 720, '& .MuiTableCell-body': { py: 1.25, px: 2 } }}>
@@ -475,7 +586,7 @@ export function AnalyticsSummary({ selectedMonth, selectedYear, selectedProduct 
                       title={
                         <Box>
                           <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{metricTooltips[idx]?.title || metric}</Typography>
-                          <Typography variant="body2">{metricTooltips[idx]?.description || formula}</Typography>   
+                          <Typography variant="body2">{metricTooltips[idx]?.description}</Typography>   
                         </Box>
                       }
                     >
@@ -483,7 +594,9 @@ export function AnalyticsSummary({ selectedMonth, selectedYear, selectedProduct 
                     </Tooltip>
                   </TableCell>
                   <TableCell sx={{ color: 'text.secondary' }}>
-                    <span>{formula}</span>
+                    <Tooltip arrow placement="top" disableInteractive title={metricTooltips[idx]?.description || ''}>
+                      <span>{formula}</span>
+                    </Tooltip>
                   </TableCell>
                   <TableCell>{value}</TableCell>
                 </TableRow>
